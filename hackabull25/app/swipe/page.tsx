@@ -1,36 +1,64 @@
-"use client";
+'use client';
 
-import SwipeCard from "../../components/SwipeCard";
+import { useEffect, useState } from 'react';
+import { createClient } from '@supabase/supabase-js';
+import SwipeCard from '../../components/SwipeCard';
 
-const mockItems = [
-  {
-    id: "item1",
-    image: "https://via.placeholder.com/300x200.png?text=Water+Filter",
-    title: "Water Filter",
-    value: 30,
-    description: "",
-  },
-  {
-    id: "item2",
-    image: "https://via.placeholder.com/300x200.png?text=Clean+Socks",
-    title: "Clean Socks (4x)",
-    value: 10,
-    description: "",
-  },
-  {
-    id: "item3",
-    image: "https://via.placeholder.com/300x200.png?text=Camp+Stove",
-    title: "Portable Camp Stove",
-    value: 45,
-    description: "",
-  },
-];
+type ProductFromDB = {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+};
+
+type SwipeItem = {
+  id: string;
+  title: string;
+  description: string;
+  value: number;
+  image: string;
+};
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function SwipePage() {
+  const [items, setItems] = useState<SwipeItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      const { data, error } = await supabase.from('products').select('*');
+      if (error) {
+        console.error('[Supabase] Error:', error.message);
+      } else if (data) {
+        const mapped: SwipeItem[] = data.map((item: ProductFromDB) => ({
+          id: item.id.toString(),
+          title: item.name,
+          description: item.description,
+          value: item.price,
+          image: item.image,
+        }));
+        setItems(mapped);
+      }
+      setLoading(false);
+    };
+
+    fetchItems();
+  }, []);
+
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-4 bg-zinc-900 text-white">
       <h1 className="text-3xl font-bold mb-6">Barter Matchmaker</h1>
-      <SwipeCard items={mockItems} />
+      {loading ? (
+        <p className="text-gray-400">Loading items from Supabase...</p>
+      ) : items.length > 0 ? (
+        <SwipeCard items={items} />
+      ) : (
+        <p className="text-red-400">No items found in Supabase.</p>
+      )}
     </main>
   );
 }
