@@ -2,7 +2,6 @@
 
 import {
   SignInButton,
-  SignUpButton,
   SignedIn,
   SignedOut,
   UserButton,
@@ -37,9 +36,6 @@ export default function Home() {
           </div>
           <Link href="/explore" className="hover:underline">
             Explore
-          </Link>
-          <Link href="/upload" className="hover:underline">
-            Upload
           </Link>
           <Link href="/about" className="hover:underline">
             About
