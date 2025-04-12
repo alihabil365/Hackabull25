@@ -1,5 +1,5 @@
-import Explore from "../../components/Explore.tsx";
+import ExploreClient from '@/components/Explore';
 
 export default function ExplorePage() {
-  return <Explore />;
+  return <ExploreClient />;
 }
