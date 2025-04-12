@@ -1,34 +1,37 @@
 "use client";
 
+// React
 import { useState } from "react";
+
+// Next
 import Image from "next/image";
 
-/**
- * Interface defining the structure of the form data
- * This ensures type safety across the component
- */
+// Types
 interface AddItemFormData {
-  title: string; // Name of the item being traded
-  description: string; // Detailed description of the item
-  lookingFor: string; // What items the user wants in exchange
-  price: string; // User's estimated price of the item
-  image: File | null; // The item's image file
+  title: string;
+  description: string;
+  lookingFor: string;
+  price: string;
+  image: File | null;
 }
 
-/**
- * AddItem Component
- *
- * A form component for users to upload new items for trading.
- * Features:
- * - Image upload with preview
- * - Item details input
- * - Price estimation
- * - AI-powered value estimation (to be implemented)
- *
- * @returns {JSX.Element} The rendered form component
- */
+// ShadCn
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "./ui/button";
+
 export default function AddItem() {
-  // Main form state containing all input values
+  // States
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [estimatedValue, setEstimatedValue] = useState<number | null>(null);
   const [formData, setFormData] = useState<AddItemFormData>({
     title: "",
     description: "",
@@ -37,17 +40,7 @@ export default function AddItem() {
     image: null,
   });
 
-  // State for image preview URL
-  const [previewUrl, setPreviewUrl] = useState<string>("");
-
-  // State for AI-estimated value (to be implemented with Gemini)
-  const [estimatedValue, setEstimatedValue] = useState<number | null>(null);
-
-  /**
-   * Handles image file upload
-   * Creates a preview URL for the uploaded image
-   * TODO: Will trigger AI value estimation when implemented
-   */
+  // Functions
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -57,30 +50,67 @@ export default function AddItem() {
     }
   };
 
-  /**
-   * Handles form submission
-   * TODO: Implement submission logic to:
-   * - Upload image to Supabase storage
-   * - Save item data to database
-   * - Handle any errors
-   * - Redirect user after successful upload
-   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Implement form submission
   };
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl mb-6">Add New Item</h1>
-
+    <div className="">
       <div className="space-y-4">
-        {/* Image Upload */}
-        <div>
-          <label className="block mb-1">Click to upload an image</label>
-          <div className="border border-gray-300 p-4 text-center">
+        {/* Form Fields */}
+        <div className="space-y-4 w-full">
+          <div className="grid w-full items-center gap-1.5">
+            <Input
+              type="text"
+              id="title"
+              placeholder="Title"
+              value={formData.title}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
+            />
+          </div>
+
+          <div className="grid w-full items-center gap-1.5">
+            <Textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+              placeholder="Describe your item"
+              rows={4}
+            />
+          </div>
+
+          <div className="flex space-x-2 w-full items-center gap-1.5">
+            <Input
+              type="number"
+              id="price"
+              value={formData.price}
+              onChange={(e) =>
+                setFormData({ ...formData, price: e.target.value })
+              }
+              placeholder="Price: 0.00"
+            />
+
+            <Select>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="electronics">Electronics</SelectItem>
+                <SelectItem value="clothing">Clothing</SelectItem>
+                <SelectItem value="books">Books</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex space-x-2 w-full items-center gap-1.5">
             {previewUrl ? (
-              <div className="relative h-48">
+              <div>
                 <Image
                   src={previewUrl}
                   alt="Preview"
@@ -89,101 +119,18 @@ export default function AddItem() {
                 />
               </div>
             ) : (
-              <div>
-                <p>SVG, PNG, JPG or GIF (max. 5MB)</p>
-                <input
+              <div className="grid w-full items-center gap-1.5">
+                <Input
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
-                  className="mt-2"
                 />
               </div>
             )}
           </div>
-        </div>
 
-        {/* Form Fields */}
-        <div className="space-y-4">
-          <div>
-            <label htmlFor="title" className="block">
-              Title
-            </label>
-            <input
-              type="text"
-              id="title"
-              value={formData.title}
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
-              placeholder="Enter item title"
-              className="w-full border p-1"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="description" className="block">
-              Description
-            </label>
-            <textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              placeholder="Describe your item"
-              className="w-full border p-1"
-              rows={4}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="price" className="block">
-              Price ($)
-            </label>
-            <input
-              type="number"
-              id="price"
-              value={formData.price}
-              onChange={(e) =>
-                setFormData({ ...formData, price: e.target.value })
-              }
-              placeholder="0.00"
-              className="w-full border p-1"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="category" className="block">
-              Category
-            </label>
-            <select id="category" className="w-full border p-1" defaultValue="">
-              <option value="" disabled>
-                Select category
-              </option>
-              <option value="electronics">Electronics</option>
-              <option value="clothing">Clothing</option>
-              <option value="books">Books</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-
-          <div className="flex gap-2 mt-4">
-            <button
-              type="button"
-              className="px-4 py-1 border"
-              onClick={() => {
-                /* Add cancel handler */
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-1 border"
-              onClick={handleSubmit}
-            >
-              Add Item
-            </button>
+          <div className="flex gap-2 mt-4 justify-end">
+            <Button className="bg-purple-500 cursor-pointer">Add Item</Button>
           </div>
         </div>
       </div>
