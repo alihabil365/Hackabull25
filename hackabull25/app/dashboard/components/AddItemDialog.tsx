@@ -1,4 +1,4 @@
-import AddItem from "@/components/addItem";
+import AddItemComponent from "@/app/dashboard/components/AddItemComponent";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,7 +27,7 @@ function AddItemDialog() {
         </DialogHeader>
 
         {/* Hatem's Component */}
-        <AddItem />
+        <AddItemComponent />
       </DialogContent>
     </Dialog>
   );
