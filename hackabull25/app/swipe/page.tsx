@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import SwipeCard from "../components/SwipeCard";
+import SwipeCard from "../../components/SwipeCard";
 
 const mockItems = [
   {
@@ -8,18 +8,21 @@ const mockItems = [
     image: "https://via.placeholder.com/300x200.png?text=Water+Filter",
     title: "Water Filter",
     value: 30,
+    description: "",
   },
   {
     id: "item2",
     image: "https://via.placeholder.com/300x200.png?text=Clean+Socks",
     title: "Clean Socks (4x)",
     value: 10,
+    description: "",
   },
   {
     id: "item3",
     image: "https://via.placeholder.com/300x200.png?text=Camp+Stove",
     title: "Portable Camp Stove",
     value: 45,
+    description: "",
   },
 ];
 
