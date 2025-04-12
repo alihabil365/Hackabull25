@@ -301,7 +301,7 @@ export default function Explore() {
 
               <Link
                 href={`/product/${item.id}`}
-                className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 block"
+                className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 block h-full"
               >
                 <div className="relative h-48 w-full bg-gray-100">
                   <Image
@@ -323,16 +323,11 @@ export default function Explore() {
                   <h3 className="text-lg mb-1 text-black">{item.title}</h3>
                   <p className="text-gray-600 text-sm">{item.location}</p>
 
-                  {item.additionalInfo && (
+                  {item.condition && (
                     <div className="mt-2">
-                      {item.additionalInfo.map((info, index) => (
-                        <span
-                          key={index}
-                          className="inline-block bg-gray-100 rounded-full px-3 py-1 text-sm text-gray-700 mr-2 mb-2"
-                        >
-                          {info}
-                        </span>
-                      ))}
+                      <span className="inline-block bg-gray-100 rounded-full px-3 py-1 text-sm text-gray-700">
+                        {item.condition}
+                      </span>
                     </div>
                   )}
                 </div>
