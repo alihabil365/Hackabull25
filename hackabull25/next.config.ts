@@ -8,6 +8,7 @@ const nextConfig = {
       'www.lego.com',
       'www.notebookcheck.net',
       'm.media-amazon.com',
+      'ktuugphnnstpngtlvhhi.supabase.co',
       
     ],
   },
