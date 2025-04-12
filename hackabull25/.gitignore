@@ -23,6 +23,8 @@
 # misc
 .DS_Store
 *.pem
+Thumbs.db
+desktop.ini
 
 # debug
 npm-debug.log*
@@ -32,6 +34,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # vercel
 .vercel
@@ -39,3 +45,37 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# IDE - JetBrains (WebStorm, IntelliJ, etc)
+.idea/
+*.iml
+*.iws
+
+# IDE - Visual Studio
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Package manager
+package-lock.json
+yarn.lock
+.yarnrc
+.npmrc
+
+# Optional
+*.log
+.eslintcache
+.stylelintcache
+.node_repl_history
