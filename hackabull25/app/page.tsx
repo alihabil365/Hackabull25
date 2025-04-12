@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   SignInButton,
@@ -6,9 +6,12 @@ import {
   SignedIn,
   SignedOut,
   UserButton,
-} from '@clerk/nextjs';
-import Link from 'next/link';
-import Image from 'next/image';
+} from "@clerk/nextjs";
+import Link from "next/link";
+import Image from "next/image";
+import { GalleryVerticalEnd } from "lucide-react";
+
+import { motion } from "motion/react";
 
 export default function Home() {
   return (
@@ -23,22 +26,35 @@ export default function Home() {
       />
 
       {/* 🔸 Overlay */}
-      <div className="absolute inset-0 bg-black/60 z-0" />
+      {/* <div className="absolute inset-0 bg-black/60 z-0" /> */}
 
       {/* 🔸 Header */}
-      <header className="relative z-10 flex justify-between items-center px-8 py-6 border-b border-neutral-800">
+      <header className="fixed w-full z-50 flex justify-between items-center p-6 bg-[#0000002f] backdrop-blur-3xl">
         <nav className="flex gap-6 text-sm">
-          <Link href="/" className="hover:underline">Home</Link>
-          <Link href="/explore" className="hover:underline">Explore</Link>
-          <Link href="/upload" className="hover:underline">Upload</Link>
-          <Link href="/about" className="hover:underline">About</Link>
-          <Link href="/swipe" className="hover:underline">Swipe</Link>
-          <Link href="/dashboard" className="hover:underline">Dashboard</Link>
+          <div className="flex items-center gap-4">
+            <GalleryVerticalEnd className="size-4" />
+            <p className="font-bold">Bartr Inc.</p>
+          </div>
+          <Link href="/explore" className="hover:underline">
+            Explore
+          </Link>
+          <Link href="/upload" className="hover:underline">
+            Upload
+          </Link>
+          <Link href="/about" className="hover:underline">
+            About
+          </Link>
+          <Link href="/swipe" className="hover:underline">
+            Swipe
+          </Link>
+          <Link href="/dashboard" className="hover:underline">
+            Dashboard
+          </Link>
         </nav>
+
         <div className="flex items-center gap-4">
           <SignedOut>
             <SignInButton />
-            <SignUpButton />
           </SignedOut>
           <SignedIn>
             <UserButton />
@@ -47,15 +63,25 @@ export default function Home() {
       </header>
 
       {/* 🔸 Hero Section */}
-      <main className="relative z-10 flex flex-col items-center justify-center text-center py-32 px-6">
-        <h1
-          className="text-6xl md:text-8xl font-extrabold"
+      <main className="relative z-10 flex flex-col items-center justify-center text-center h-screen">
+        <motion.p
+          initial={{ opacity: 0, transform: "translateY(100px)" }}
+          animate={{ opacity: 1, transform: "translateY(0px)" }}
+          transition={{ type: "spring", duration: 2.5 }}
+          className="text-9xl font-bold select-none bg-clip-text text-transparent bg-gradient-to-r from-white/80 to-white/30"
         >
-          Welcome to Bartr
-        </h1>
-        <p className="max-w-2xl text-lg md:text-2xl text-gray-300 ">
+          Bartr.
+        </motion.p>
+
+        {/* Sub title */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ type: "spring", delay: 1, duration: 2.5 }}
+          className="text-3xl select-none"
+        >
           Trade. Trust. Thrive. Enter to the future of bartering.
-        </p>
+        </motion.p>
       </main>
     </div>
   );
