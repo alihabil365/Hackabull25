@@ -75,3 +75,9 @@ yarn.lock
 .eslintcache
 .stylelintcache
 .node_repl_history
+
+# Cursor specific
+.cursor/
+cursor.json
+.cursor-test/
+

@@ -30,15 +30,37 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={inter.className}>
         <body>
-          {/* <header className="flex justify-end items-center p-4 gap-4 h-16">
-            <SignedOut>
-              <SignInButton />
-              <SignUpButton />
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-          </header> */}
+          <header className="flex justify-between items-center p-4 gap-4 h-16">
+            {/* 🔹 Navbar links on the left */}
+            <nav className="flex gap-6 items-center">
+              <a href="" className="text-sm font-semibold hover:underline">
+                Home
+              </a>
+              <a href="/browse" className="text-sm hover:underline">
+                Browse
+              </a>
+              <a href="/upload" className="text-sm hover:underline">
+                Upload
+              </a>
+              <a href="/about" className="text-sm hover:underline">
+                About
+              </a>
+              <a href="/swipe" className="text-sm hover:underline">
+                Swipe
+              </a>
+            </nav>
+
+            {/* 🔸 Clerk Auth Buttons on the right (original layout preserved) */}
+            <div className="flex items-center gap-4">
+              <SignedOut>
+                <SignInButton />
+                <SignUpButton />
+              </SignedOut>
+              <SignedIn>
+                <UserButton />
+              </SignedIn>
+            </div>
+          </header>
           {children}
         </body>
       </html>
