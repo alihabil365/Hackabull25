@@ -7,54 +7,37 @@ if (!process.env.GEMINI_API_KEY) {
 // Initialize Gemini API
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-interface ProductAnalysis {
-  productType: string;
-  brand: string | null;
-  model: string | null;
-  features: string[];
-  condition: {
-    rating: string;
-    details: string[];
-  };
-  priceEstimate: {
-    min: number;
-    max: number;
-    justification: string;
-  };
+interface PriceAnalysis {
+  min: number;
+  max: number;
+  justification: string;
 }
 
-export async function analyzeProductImage(imageBase64: string): Promise<ProductAnalysis> {
+export async function analyzeProductImage(imageBase64: string): Promise<PriceAnalysis> {
   try {
-    // Get the model
-    const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
+    // Get the model - using Gemini 2.0 Flash for better performance
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-    const prompt = `You are provided with an image of a product. Please analyze it and provide a structured response with the following information:
+    const prompt = `Analyze this product image and provide ONLY a price estimate in the following exact format:
 
-1. Product Identification:
-   - Type of product
-   - Brand (if visible)
-   - Model (if visible)
-   - Main features or specifications
+Minimum price: $X
+Maximum price: $Y
+Justification: Brief explanation of the price range
 
-2. Condition Assessment:
-   - Overall condition rating (Like New, Good, Fair, Poor)
-   - Detailed observations about visible condition (wear, damage, etc.)
+Please ensure the prices are in USD and are numbers only. Do not include any other information.`;
 
-3. Market Value Estimation:
-   - Minimum price estimate in USD
-   - Maximum price estimate in USD
-   - Brief justification for the price range
-
-Please provide your response in a clear, structured format that can be easily parsed.`;
-
-    // Convert base64 to Uint8Array
-    const imageData = Buffer.from(imageBase64.split(',')[1], 'base64');
+    // Extract the base64 data from the data URL format
+    const base64Data = imageBase64.split(';base64,').pop() || '';
+    
+    if (!base64Data) {
+      throw new Error('Invalid image data format');
+    }
 
     // Prepare the image part
     const imagePart = {
       inlineData: {
-        data: Buffer.from(imageData).toString('base64'),
-        mimeType: "image/jpeg"
+        data: base64Data,
+        mimeType: imageBase64.split(';')[0].split(':')[1]
       }
     };
 
@@ -63,50 +46,38 @@ Please provide your response in a clear, structured format that can be easily pa
     const response = await result.response;
     const text = response.text();
 
-    // Parse the response into structured data
-    // Note: This is a simplified parsing. You might need to adjust based on actual response format
-    const analysis: ProductAnalysis = {
-      productType: "",
-      brand: null,
-      model: null,
-      features: [],
-      condition: {
-        rating: "",
-        details: []
-      },
-      priceEstimate: {
-        min: 0,
-        max: 0,
-        justification: ""
-      }
-    };
+    console.log('=== Raw Gemini API Response ===');
+    console.log(text);
+    console.log('==============================');
 
-    // Extract information from the text response
-    // You might need to adjust this parsing logic based on the actual response format
-    const lines = text.split('\n');
-    let currentSection = '';
+    // Extract price information using regex
+    const minPriceMatch = text.match(/Minimum price:\s*\$?\s*([0-9,.]+)/i);
+    const maxPriceMatch = text.match(/Maximum price:\s*\$?\s*([0-9,.]+)/i);
+    const justificationMatch = text.match(/Justification:\s*(.+)(?:\n|$)/i);
 
-    for (const line of lines) {
-      if (line.includes('Type of product:')) {
-        analysis.productType = line.split(':')[1].trim();
-      } else if (line.includes('Brand:')) {
-        analysis.brand = line.split(':')[1].trim();
-      } else if (line.includes('Model:')) {
-        analysis.model = line.split(':')[1].trim();
-      } else if (line.includes('condition rating:')) {
-        analysis.condition.rating = line.split(':')[1].trim();
-      } else if (line.includes('Minimum price estimate:')) {
-        analysis.priceEstimate.min = parseFloat(line.split(':')[1].trim().replace('$', ''));
-      } else if (line.includes('Maximum price estimate:')) {
-        analysis.priceEstimate.max = parseFloat(line.split(':')[1].trim().replace('$', ''));
-      } else if (line.includes('justification:')) {
-        analysis.priceEstimate.justification = line.split(':')[1].trim();
-      }
+    if (!minPriceMatch || !maxPriceMatch) {
+      throw new Error('Failed to extract price information from response');
     }
 
+    // Parse the prices, removing any commas
+    const minPrice = parseFloat(minPriceMatch[1].replace(/,/g, ''));
+    const maxPrice = parseFloat(maxPriceMatch[1].replace(/,/g, ''));
+    const justification = justificationMatch ? justificationMatch[1].trim() : '';
+
+    if (isNaN(minPrice) || isNaN(maxPrice)) {
+      throw new Error('Invalid price values extracted');
+    }
+
+    const analysis: PriceAnalysis = {
+      min: minPrice,
+      max: maxPrice,
+      justification: justification
+    };
+
+    console.log('Parsed price analysis:', analysis);
     return analysis;
   } catch (error) {
-    console.error('Error analyzing product image:', error);
+    console.error('Error in analyzeProductImage:', error);
     throw error;
   }
 } 
