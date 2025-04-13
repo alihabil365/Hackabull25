@@ -47,7 +47,7 @@ export default function ProductsPage() {
       const { data, error } = await supabase
         .from("products")
         .select("*")
-        .eq("user_id", user?.id)
+        .eq("userId", user?.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -81,15 +81,15 @@ export default function ProductsPage() {
       <DashboardSidebar />
 
       {/* Main Content */}
-      <div className="flex-1 bg-gray-50">
-        <div className="p-6 border-b">
+      <div className="flex-1 bg-gray-50 pr-6">
+        <div className="py-6 border-b">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
             <h1 className="text-3xl font-bold text-gray-900">My Products</h1>
             <AddItemDialog />
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto p-6">
+        <div className="max-full py-6">
           {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
@@ -106,13 +106,15 @@ export default function ProductsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product) => (
                 <Card key={product.id} className="overflow-hidden">
-                  <div className="relative h-48 w-full">
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      fill
-                      className="object-cover"
-                    />
+                  <div className="relative h-fit w-full">
+                    <div className="h-24">
+                      <Image
+                        src={product.image}
+                        alt={product.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
                     <Badge
                       className="absolute top-2 right-2"
                       variant={
@@ -126,24 +128,15 @@ export default function ProductsPage() {
                       {product.status}
                     </Badge>
                   </div>
-                  <CardHeader>
+                  <CardHeader className="m-0">
                     <CardTitle className="flex justify-between items-start">
-                      <span className="text-xl">{product.name}</span>
-                      <span className="text-lg font-bold">
-                        ${product.price.toFixed(2)}
-                      </span>
+                      <p className="text-xl truncate w-full">{product.name}</p>
                     </CardTitle>
+                    <span className="text-sm">${product.price.toFixed(2)}</span>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                      {product.description}
-                    </p>
                     <div className="flex justify-between items-center">
-                      <p className="text-xs text-gray-500">
-                        Added{" "}
-                        {new Date(product.created_at).toLocaleDateString()}
-                      </p>
-                      <div className="flex gap-2">
+                      {/* <div className="flex gap-2">
                         <Button
                           variant="outline"
                           size="sm"
@@ -152,15 +145,16 @@ export default function ProductsPage() {
                           <Edit2Icon className="h-4 w-4" />
                         </Button>
                         <Button
-                          variant="outline"
+                          variant="outline"`
                           size="sm"
                           className="text-red-600 hover:text-red-700"
                           onClick={() => handleDelete(product.id)}
                         >
                           <Trash2Icon className="h-4 w-4" />
                         </Button>
-                      </div>
+                      </div> */}
                     </div>
+                    <Button className="w-full">Go to swiper</Button>
                   </CardContent>
                 </Card>
               ))}
