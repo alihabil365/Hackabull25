@@ -135,7 +135,6 @@ export default function AddItem({ onItemCreated }: AddItemProps) {
     }
 
     startTransition(async () => {
-      // Upload Image
       const supabase = createClient();
 
       const fileName = `${Date.now()}-${selectedFile.name}`;
