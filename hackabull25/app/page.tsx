@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import Image from "next/image";
 import { GalleryVerticalEnd } from "lucide-react";
@@ -30,7 +25,7 @@ export default function Home() {
       {/* 🔸 Header */}
       <header className="fixed w-full z-50 flex justify-between items-center p-6 bg-[#0000002f] backdrop-blur-3xl">
         <nav className="flex gap-6 text-sm">
-          <Link href="/" legacyBehavior>
+          <Link href="/">
             <a className="hover:underline flex items-center gap-4">
               <GalleryVerticalEnd className="size-4" />
               <p className="font-bold">Bartr Inc.</p>
