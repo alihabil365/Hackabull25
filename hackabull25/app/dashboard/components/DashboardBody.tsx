@@ -258,172 +258,31 @@ export default function DashboardBody() {
   };
 
   return (
-    <div className="px-6 space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Current Bids Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex justify-between items-center">
-              <span>Current Bids</span>
-              <Badge
-                variant="secondary"
-                className="bg-purple-100 text-purple-800"
-              >
-                {currentBids.length} Active
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {loadingBids ? (
-                <div className="text-center py-4">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-                </div>
-              ) : groupedBids.length === 0 ? (
-                <div className="text-center py-4">
-                  <p className="text-gray-500">No active bids</p>
-                </div>
-              ) : (
-                groupedBids.map(({ targetItem, bids }) => (
-                  <div key={targetItem.id} className="space-y-2">
-                    <div
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100"
-                      onClick={() => toggleItemExpansion(targetItem.id)}
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className="relative h-16 w-16">
-                          <Image
-                            src={targetItem.image}
-                            alt={targetItem.name}
-                            fill
-                            className="object-cover rounded-md"
-                          />
-                        </div>
-                        <div className="flex-1 w-48">
-                          <p className="font-medium line-clamp-1">
-                            {targetItem.name}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            ${targetItem.price.toFixed(2)}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <Badge
-                          variant="secondary"
-                          className="bg-blue-100 text-blue-800"
-                        >
-                          {bids.length} {bids.length === 1 ? "bid" : "bids"}
-                        </Badge>
-                        {expandedItems.has(targetItem.id) ? (
-                          <ChevronUpIcon className="h-5 w-5" />
-                        ) : (
-                          <ChevronDownIcon className="h-5 w-5" />
-                        )}
-                      </div>
-                    </div>
+    <div className="flex-1 px-6 flex-col">
+      <div className="flex space-x-6 h-1/2 pb-6">
+        <div className="w-1/2 bg-red-500">box 1</div>
+        <div className="w-1/2 bg-green-500">box 2</div>
+      </div>
+      <div className="flex space-x-6 h-1/2 pb-6">
+        <div className="w-1/2 bg-blue-500">box3</div>
+        <div className="w-1/2 bg-orange-500">box4</div>
+      </div>
+    </div>
+  );
 
-                    {/* Dropdown content */}
-                    {expandedItems.has(targetItem.id) && (
-                      <div className="pl-8 space-y-2">
-                        {bids.map((bid) => (
-                          <div
-                            key={bid.id}
-                            className="flex items-center justify-between p-3 bg-white border rounded-lg"
-                          >
-                            <div className="flex items-center space-x-3">
-                              <div className="relative h-12 w-12">
-                                <Image
-                                  src={bid.offered_item.image}
-                                  alt={bid.offered_item.name}
-                                  fill
-                                  className="object-cover rounded-md"
-                                />
-                              </div>
-                              <div>
-                                <p className="font-medium">
-                                  {bid.offered_item.name}
-                                </p>
-                                <p className="text-sm text-gray-500">
-                                  by {bid.bidder.firstName}{" "}
-                                  {bid.bidder.lastName}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <p className="font-bold">
-                                ${bid.offered_item.price.toFixed(2)}
-                              </p>
-                              <div className="flex space-x-1">
-                                <Button
-                                  size="sm"
-                                  className="bg-green-500 hover:bg-green-600"
-                                  onClick={async () => {
-                                    const success = await updateBidStatus(
-                                      bid.id,
-                                      "accepted",
-                                      bid.bidder_id,
-                                      user?.id || "",
-                                      targetItem.name,
-                                      bid.offered_item.name
-                                    );
-                                    if (success) {
-                                      toast.success("Bid accepted!");
-                                      fetchUserBids();
-                                    } else {
-                                      toast.error("Failed to accept bid");
-                                    }
-                                  }}
-                                >
-                                  Accept
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="border-red-500 text-red-500 hover:bg-red-50"
-                                  onClick={async () => {
-                                    const success = await updateBidStatus(
-                                      bid.id,
-                                      "rejected",
-                                      bid.bidder_id,
-                                      user?.id || "",
-                                      targetItem.name,
-                                      bid.offered_item.name
-                                    );
-                                    if (success) {
-                                      toast.success("Bid rejected");
-                                      fetchUserBids();
-                                    } else {
-                                      toast.error("Failed to reject bid");
-                                    }
-                                  }}
-                                >
-                                  Reject
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
+  return (
+    <div className="h-full px-6 pb-6 bg-red-500 flex-1">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full auto-rows-fr">
+        {/* Current Bids Card */}
 
         {/* My Items Card */}
-        <Card>
+        <Card className="flex flex-col h-full">
           <CardHeader>
             <CardTitle className="flex justify-between items-center">
               <span>My Items</span>
-              {/* <Button variant="outline" size="sm" asChild>
-                <Link href="/dashboard/add-item">+ Add Item</Link>
-              </Button> */}
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 overflow-y-auto">
             <div className="space-y-4">
               {loading ? (
                 <div className="text-center py-4">
@@ -472,7 +331,7 @@ export default function DashboardBody() {
         </Card>
 
         {/* Notifications Card */}
-        <Card>
+        <Card className="flex flex-col h-full">
           <CardHeader>
             <CardTitle className="flex justify-between items-center">
               <span>Notifications</span>
@@ -481,7 +340,7 @@ export default function DashboardBody() {
               </Badge>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 overflow-y-auto">
             <div className="space-y-4">
               {loadingNotifications ? (
                 <div className="text-center py-4">
@@ -528,11 +387,11 @@ export default function DashboardBody() {
         </Card>
 
         {/* Wishlist Card */}
-        <Card>
+        <Card className="flex flex-col h-full">
           <CardHeader>
             <CardTitle>Wishlist</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 overflow-y-auto">
             <div className="space-y-4">
               <div className="max-h-[300px] overflow-y-auto space-y-3 pr-2">
                 {loadingWishlist ? (
