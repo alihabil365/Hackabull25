@@ -32,7 +32,7 @@ function Page() {
 
       // If the user doesn't exist, insert a new row
       if (!existingUser) {
-        const { error: insertError } = await supabase.from("users").insert({
+        const { data, error } = await supabase.from("users").insert({
           id,
           emailAddress: emailAddresses[0]?.emailAddress || null,
           firstName: firstName || null,
@@ -40,11 +40,7 @@ function Page() {
           imageUrl: imageUrl,
         });
 
-        if (insertError) {
-          console.error("Error creating user:", insertError.message);
-        } else {
-          console.log("User created successfully in Supabase.");
-        }
+        if (error) console.log(error);
       }
     } catch (err) {
       console.error("Unexpected error:", err);
