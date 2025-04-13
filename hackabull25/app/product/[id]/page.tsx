@@ -195,6 +195,7 @@ export default function ProductPage({
                     target_item_id: product.id,
                     status: "pending",
                   }));
+<<<<<<< HEAD
 
                   const { error: insertError } = await supabase
                     .from("bids")
@@ -202,6 +203,15 @@ export default function ProductPage({
                       onConflict: "bidder_id,offered_item_id,target_item_id",
                     });
 
+=======
+                
+                  const { error: insertError } = await supabase
+                    .from("bids")
+                    .upsert(inserts, {
+                    onConflict: "bidder_id,offered_item_id,target_item_id",
+                  });
+                
+>>>>>>> ali
                   if (insertError) {
                     console.error("Bid failed:", insertError.message);
                     toast.error("Failed to place bid.");
