@@ -76,7 +76,7 @@ export default function Home() {
           transition={{ type: "spring", delay: 1, duration: 2.5 }}
           className="text-3xl select-none"
         >
-          Trade. Trust. Thrive. Enter to the future of bartering.
+          Trade. Trust. Thrive. Enter the future of bartering.
         </motion.p>
       </main>
     </div>
