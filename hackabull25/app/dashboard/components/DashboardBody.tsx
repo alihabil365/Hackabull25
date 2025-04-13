@@ -25,6 +25,14 @@ interface UserItem {
   description: string;
 }
 
+interface WishlistItem {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  description: string;
+}
+
 interface Bid {
   id: string;
   itemName: string;
@@ -45,7 +53,9 @@ interface Notification {
 export default function DashboardBody() {
   const { user } = useUser();
   const [userItems, setUserItems] = useState<UserItem[]>([]);
+  const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingWishlist, setLoadingWishlist] = useState(true);
   const supabase = createClient();
 
   // Example data for bids and notifications - these can be updated later to use real data
@@ -95,6 +105,7 @@ export default function DashboardBody() {
   useEffect(() => {
     if (user) {
       fetchUserItems();
+      fetchWishlistItems();
     }
   }, [user]);
 
@@ -113,6 +124,42 @@ export default function DashboardBody() {
       console.error("Error fetching user items:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchWishlistItems = async () => {
+    if (!user) return;
+
+    try {
+      // 1. Fetch list of product_ids from wishlist
+      const { data: wishData, error: wishError } = await supabase
+        .from("wishlists")
+        .select("product_id")
+        .eq("user_id", user.id);
+
+      if (wishError) throw wishError;
+
+      if (wishData.length === 0) {
+        setWishlistItems([]);
+        setLoadingWishlist(false);
+        return;
+      }
+
+      const productIds = wishData.map((w) => w.product_id);
+
+      // 2. Fetch matching product details
+      const { data: products, error: productError } = await supabase
+        .from("products")
+        .select("*")
+        .in("id", productIds);
+
+      if (productError) throw productError;
+
+      setWishlistItems(products || []);
+    } catch (error) {
+      console.error("Error fetching wishlist items:", error);
+    } finally {
+      setLoadingWishlist(false);
     }
   };
 
@@ -249,26 +296,46 @@ export default function DashboardBody() {
           </CardContent>
         </Card>
 
-        {/* Swipe Feature Card */}
+        {/* Wishlist Card */}
         <Card>
           <CardHeader>
-            <CardTitle>Start Swiping</CardTitle>
+            <CardTitle>Wishlist</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-center space-y-4">
-              <div className="relative h-40 w-full">
-                <Image
-                  src="/images/photo-1712133611163-3dc3cadecf7f.avif"
-                  alt="Swipe Feature"
-                  fill
-                  className="object-cover rounded-lg opacity-75"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#f89b29]/20 to-[#ff0f7b]/20 rounded-lg" />
+            <div className="space-y-4">
+              <div className="max-h-[300px] overflow-y-auto space-y-3 pr-2">
+                {loadingWishlist ? (
+                  <div className="text-center py-4">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+                  </div>
+                ) : wishlistItems.length === 0 ? (
+                  <div className="text-center py-4">
+                    <p className="text-gray-500">Your wishlist is empty</p>
+                  </div>
+                ) : (
+                  wishlistItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg"
+                    >
+                      <div className="relative h-16 w-16">
+                        <Image
+                          src={item.image}
+                          alt={item.name}
+                          fill
+                          className="object-cover rounded-md"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium">{item.name}</p>
+                        <p className="text-sm text-gray-500">
+                          ${item.price.toFixed(2)}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
-              <p className="text-gray-600">
-                Discover new items by swiping through our marketplace. Match
-                with items you're interested in and start trading!
-              </p>
               <Button
                 className="w-full bg-gradient-to-r from-[#f89b29] to-[#ff0f7b]"
                 asChild
