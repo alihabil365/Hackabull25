@@ -188,7 +188,9 @@ export default function ProductPage({
                     status: "pending",
                   }));
                 
-                  const { error: insertError } = await supabase.from("bids").upsert(inserts, {
+                  const { error: insertError } = await supabase
+                    .from("bids")
+                    .upsert(inserts, {
                     onConflict: "bidder_id,offered_item_id,target_item_id",
                   });
                 

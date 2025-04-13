@@ -35,8 +35,8 @@ export default function DashboardPage() {
         const { data, error } = await supabase.from("users").insert({
           id,
           emailAddress: emailAddresses[0]?.emailAddress || null,
-          firstName: firstName || null,
-          lastName: lastName || null,
+          firstName: firstName,
+          lastName: lastName,
           imageUrl: imageUrl,
         });
 
