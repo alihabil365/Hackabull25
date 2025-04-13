@@ -18,7 +18,7 @@ function DashboardSidebar() {
   };
 
   return (
-    <div className="w-1/5 p-6 bg-gray-50 flex flex-col h-screen border-r">
+    <div className="w-1/5 p-6 bg-gray-50 flex flex-col h-screen ">
       {/* Logo */}
       <Link href="/dashboard" className="flex items-center gap-4 mb-6">
         <Image src="/Logo.svg" alt="Bartr Logo" width={150} height={150} />

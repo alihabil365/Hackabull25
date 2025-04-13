@@ -2,7 +2,7 @@ import ExploreClient from "@/components/Explore";
 
 function page() {
   return (
-    <div className="min-h-screen w-3/4 flex pr-6 bg-gray-50">
+    <div className="min-h-screen w-4/5 flex pr-6 bg-gray-50">
       {/* Main Content */}
       <div className="flex-1 bg-gray-50 overflow-auto">
         <div className="p-6 border-b">
