@@ -99,14 +99,14 @@ export default function SwipePage({
   }, [id]);
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-4 bg-zinc-900 text-white">
-      <h1 className="text-3xl font-bold mb-6">Barter Matchmaker</h1>
+    <main className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-br from-[#f6d5f7] to-[#fbe9d7]">
+      <h1 className="text-3xl font-bold mb-6">Swiper</h1>
       {loading ? (
-        <p className="text-gray-400">Loading items from Supabase...</p>
+        <p className="text-gray-500">Loading items from Supabase...</p>
       ) : items.length > 0 ? (
         <SwipeCard items={items} />
       ) : (
-        <p className="text-red-400">No items found in Supabase.</p>
+        <p className="text-red-500">No items found in Supabase.</p>
       )}
     </main>
   );
