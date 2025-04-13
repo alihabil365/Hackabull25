@@ -42,6 +42,7 @@ export default function DashboardPage() {
         });
 
         if (error) console.log(error);
+        else console.log(data);
       }
     } catch (err) {
       console.error("Unexpected error:", err);
