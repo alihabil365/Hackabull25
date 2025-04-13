@@ -174,15 +174,15 @@ export default function AddItem() {
 
           <div className="flex space-x-2 w-full items-center gap-1.5">
             <div className="relative flex-grow">
-            <Input
-              type="number"
-              id="price"
-              value={price}
+              <Input
+                type="number"
+                id="price"
+                value={price}
                 onChange={(e) => {
                   setPrice(e.target.value);
                   setIsAiSuggested(false);
                 }}
-              placeholder="Price: 0.00"
+                placeholder="Price: 0.00"
                 className={isAnalyzing ? "opacity-50" : ""}
                 disabled={isAnalyzing}
               />
