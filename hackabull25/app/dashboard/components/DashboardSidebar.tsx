@@ -38,9 +38,11 @@ function DashboardSidebar() {
             <p className="text-lg font-medium">Dashboard</p>
           </Link>
           <Link
-            href="/explore"
+            href="/dashboard/explore"
             className={`flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors ${
-              isActive("/explore") ? "text-purple-500 bg-purple-50" : ""
+              isActive("/dashboard/explore")
+                ? "text-purple-500 bg-purple-50"
+                : ""
             }`}
           >
             <CompassIcon className="size-6" />
