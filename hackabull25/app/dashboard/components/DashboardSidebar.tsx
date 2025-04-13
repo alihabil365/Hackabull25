@@ -60,9 +60,11 @@ function DashboardSidebar() {
             <p className="text-lg font-medium">My Products</p>
           </Link>
           <Link
-            href="/wishlist"
+            href="/dashboard/wishlist"
             className={`flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors ${
-              isActive("/wishlist") ? "text-purple-500 bg-purple-50" : ""
+              isActive("/dashboard/wishlist")
+                ? "text-purple-500 bg-purple-50"
+                : ""
             }`}
           >
             <HeartIcon className="size-6" />
