@@ -26,7 +26,7 @@ function DashboardSidebar() {
 
       {/* Main Menu */}
       <div className="flex-1 flex flex-col">
-        <p className="text-base opacity-50 font-medium mb-6">Main Menu</p>
+        <p className="text-base opacity-50 font-medium mb-6"> </p>
         <div className="space-y-6">
           <Link
             href="/dashboard"

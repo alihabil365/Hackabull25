@@ -337,10 +337,10 @@ export default function DashboardBody() {
                 )}
               </div>
               <Button
-                className="w-full bg-gradient-to-r from-[#f89b29] to-[#ff0f7b]"
+                className="w-full bg-gradient-to-r from-[#E329F8FF] to-[#ff0f7b]"
                 asChild
               >
-                <Link href="/swipe">Start Swiping</Link>
+                <Link href="/dashboard/products">Start Swiping</Link>
               </Button>
             </div>
           </CardContent>
