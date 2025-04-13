@@ -259,7 +259,7 @@ export default function DashboardBody() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="px-6 pb-6 space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Current Bids Card */}
         <Card>
@@ -301,7 +301,9 @@ export default function DashboardBody() {
                           />
                         </div>
                         <div>
-                          <p className="font-medium">{targetItem.name}</p>
+                          <p className="font-medium line-clamp-1 w-48">
+                            {targetItem.name}
+                          </p>
                           <p className="text-sm text-gray-500">
                             ${targetItem.price.toFixed(2)}
                           </p>
@@ -328,7 +330,7 @@ export default function DashboardBody() {
                         {bids.map((bid) => (
                           <div
                             key={bid.id}
-                            className="flex flex-col items-center justify-between p-3 bg-white border rounded-lg"
+                            className="flex flex-col space-y-3 justify-between p-3 bg-white border rounded-lg"
                           >
                             <div className="flex items-center space-x-3">
                               <div className="relative h-12 w-12">
@@ -344,20 +346,16 @@ export default function DashboardBody() {
                                   {bid.offered_item.name}
                                 </p>
                                 <p className="text-sm text-gray-500">
-                                  by {bid.bidder.firstName}{" "}
-                                  {bid.bidder.lastName}
+                                  ${bid.offered_item.price.toFixed(2)} by{" "}
+                                  {bid.bidder.firstName} {bid.bidder.lastName}
                                 </p>
                               </div>
                             </div>
-                            <div className="flex items-center space-x-2">
-                              <p className="font-bold">
-                                ${bid.offered_item.price.toFixed(2)}
-                              </p>
-                            </div>
+
                             <div className="flex space-x-1">
                               <Button
                                 size="sm"
-                                className="bg-green-500 hover:bg-green-600"
+                                className="bg-green-50 text-green-500 w-1/2 cursor-pointer hover:bg-green-50 hover:brightness-75"
                                 onClick={async () => {
                                   const success = await updateBidStatus(
                                     bid.id,
@@ -379,8 +377,7 @@ export default function DashboardBody() {
                               </Button>
                               <Button
                                 size="sm"
-                                variant="outline"
-                                className="border-red-500 text-red-500 hover:bg-red-50"
+                                className="bg-red-50 text-red-500 w-1/2 cursor-pointer hover:bg-red-50 hover:brightness-75"
                                 onClick={async () => {
                                   const success = await updateBidStatus(
                                     bid.id,

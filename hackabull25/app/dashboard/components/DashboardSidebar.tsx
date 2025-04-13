@@ -1,13 +1,12 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import {
   BoxIcon,
   HouseIcon,
   Package,
-  User,
   CompassIcon,
   HeartIcon,
+  GitCompareArrows,
 } from "lucide-react";
 
 function DashboardSidebar() {
@@ -18,10 +17,18 @@ function DashboardSidebar() {
   };
 
   return (
+<<<<<<< HEAD
     <div className="w-1/5 p-6 bg-gray-50 flex flex-col h-screen ">
+=======
+    <div className="w-1/5 p-6 bg-gray-50 dark:bg-black flex flex-col h-screen border-r">
+>>>>>>> 6d0d084a4d3987d9ed1ef5fa5e98ee39761beea1
       {/* Logo */}
-      <Link href="/dashboard" className="flex items-center gap-4 mb-6">
+      {/* <Link href="/dashboard" className="flex items-center gap-4 mb-6">
         <Image src="/Logo.svg" alt="Bartr Logo" width={150} height={150} />
+      </Link> */}
+      <Link href="/dashboard" className="flex items-center space-x-2">
+        <GitCompareArrows className="h-6 w-6 text-purple-500" />
+        <p className="text-3xl font-black">Bartr</p>
       </Link>
 
       {/* Main Menu */}
@@ -70,7 +77,7 @@ function DashboardSidebar() {
             <HeartIcon className="size-6" />
             <p className="text-lg font-medium">Wishlist</p>
           </Link>
-          <Link
+          {/* <Link
             href="/dashboard/orders"
             className={`flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors ${
               isActive("/dashboard/orders")
@@ -80,21 +87,8 @@ function DashboardSidebar() {
           >
             <Package className="size-6" />
             <p className="text-lg font-medium">Orders</p>
-          </Link>
+          </Link> */}
         </div>
-      </div>
-
-      {/* Bottom Menu */}
-      <div className="mt-auto pt-6 border-t border-gray-200">
-        <Link
-          href="/dashboard/profile"
-          className={`flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors ${
-            isActive("/dashboard/profile") ? "text-purple-500 bg-purple-50" : ""
-          }`}
-        >
-          <User className="size-6" />
-          <p className="text-lg font-medium">Profile</p>
-        </Link>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@
 import { useEffect } from "react";
 
 // Clerk
-import { useUser } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 
 // Supabase
 import { createClient } from "@/utils/supabase/client";
@@ -53,12 +53,15 @@ export default function DashboardPage() {
   }, [user]);
 
   return (
-    <div className="h-screen w-5/6 bg-gray-50 flex flex-col relative overflow-scroll">
+    <div className="h-screen w-4/5 bg-gray-50 flex flex-col relative overflow-scroll">
       {/* Main Content */}
       <div className="p-6">
         <div className="w-full mx-auto flex justify-between items-center">
           <h1 className="text-3xl font-bold text-gray-900">My Dashboard</h1>
-          <AddItemDialog />
+          <div className="flex items-center space-x-2">
+            <AddItemDialog />
+            <UserButton />
+          </div>
         </div>
         <hr className="mt-6" />
       </div>

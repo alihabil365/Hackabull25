@@ -77,84 +77,75 @@ export default function ProductsPage() {
   };
 
   return (
+<<<<<<< HEAD
     <div className="min-h-screen w-4/5 flex pr-6 bg-gray-50">
       {/* Sidebar */}
 
+=======
+    <div className="h-screen w-4/5 bg-gray-50 flex flex-col relative overflow-scroll">
+>>>>>>> 6d0d084a4d3987d9ed1ef5fa5e98ee39761beea1
       {/* Main Content */}
-      <div className="flex-1 bg-gray-50 pr-6">
-        <div className="py-6 border-b">
-          <div className="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900">My Products</h1>
+      <div className="p-6">
+        <div className="w-full mx-auto flex justify-between items-center">
+          <h1 className="text-3xl font-bold text-gray-900">My Products</h1>
+          <AddItemDialog />
+        </div>
+        <hr className="mt-6" />
+      </div>
+
+      <div className="max-full px-6">
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading your products...</p>
+          </div>
+        ) : products.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-600 mb-4">
+              You haven't added any products yet.
+            </p>
             <AddItemDialog />
           </div>
-        </div>
-
-        <div className="max-full py-6">
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Loading your products...</p>
-            </div>
-          ) : products.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-600 mb-4">
-                You haven't added any products yet.
-              </p>
-              <AddItemDialog />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map((product) => (
-                <Card key={product.id} className="overflow-hidden">
-                  <div className="relative h-fit w-full">
-                    <div className="h-24">
-                      <Image
-                        src={product.image}
-                        alt={product.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <Badge
-                      className="absolute top-2 right-2"
-                      variant={
-                        product.status === "active"
-                          ? "default"
-                          : product.status === "pending"
-                          ? "secondary"
-                          : "outline"
-                      }
-                    >
-                      {product.status}
-                    </Badge>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {products.map((product) => (
+              <Card key={product.id} className="overflow-hidden">
+                <div className="relative h-fit w-full">
+                  <div className="h-24">
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      className="object-cover"
+                    />
                   </div>
-                  <CardHeader className="m-0">
-                    <CardTitle className="flex justify-between items-start">
-                      {/* Wrap the product name in a Link to navigate to /product/{product.id} */}
-                      <Link
-                        href={`/product/${product.id}`}
-                        className="text-xl truncate w-full"
-                      >
-                        {product.name}
-                      </Link>
-                    </CardTitle>
-                    <span className="text-sm">${product.price.toFixed(2)}</span>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex justify-between items-start">
-                      <Link
-                        className="px-4 py-2 bg-black text-white hover:bg-gray-800 transition w-full rounded-xl"
-                        href={`/swipe/${product.id}`}
-                      >
-                        Go to Swiper
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
+                </div>
+                <div className="px-4 my-4">
+                  <CardTitle className="flex justify-between items-start">
+                    {/* Wrap the product name in a Link to navigate to /product/{product.id} */}
+                    <Link
+                      href={`/product/${product.id}`}
+                      className="text-xl truncate w-full"
+                    >
+                      {product.name}
+                    </Link>
+                  </CardTitle>
+                  <span className="text-sm">${product.price.toFixed(2)}</span>
+                </div>
+                <CardContent>
+                  <div className="flex justify-between items-start w-full">
+                    <Link
+                      className="px-4 py-2 bg-black text-white hover:bg-gray-800 transition w-full rounded-xl"
+                      href={`/swipe/${product.id}`}
+                    >
+                      Go to Swiper
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
