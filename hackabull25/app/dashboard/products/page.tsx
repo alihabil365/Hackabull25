@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -77,9 +77,8 @@ export default function ProductsPage() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen w-3/4 flex pr-6 bg-gray-50">
       {/* Sidebar */}
-      <DashboardSidebar />
 
       {/* Main Content */}
       <div className="flex-1 bg-gray-50 pr-6">
@@ -156,9 +155,7 @@ export default function ProductsPage() {
                       */}
                     </div>
                     <div className="px-4 py-2 bg-black text-white hover:bg-gray-800 transition w-full rounded-xl">
-                      <Link href={`/swipe/${product.id}`}  >
-                          Go to swiper
-                      </Link>
+                      <Link href={`/swipe/${product.id}`}>Go to Swiper</Link>
                     </div>
                   </CardContent>
                 </Card>
@@ -170,4 +167,3 @@ export default function ProductsPage() {
     </div>
   );
 }
-
