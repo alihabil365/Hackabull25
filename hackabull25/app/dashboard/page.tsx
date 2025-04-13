@@ -10,7 +10,6 @@ import { useUser } from "@clerk/nextjs";
 import { createClient } from "@/utils/supabase/client";
 
 // Components
-import DashboardSidebar from "./components/DashboardSidebar";
 import AddItemDialog from "./components/AddItemDialog";
 import DashboardBody from "./components/DashboardBody";
 
@@ -55,11 +54,8 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen flex">
-      {/* Sidebar */}
-      <DashboardSidebar />
-
       {/* Main Content */}
-      <div className="flex-1 bg-gray-50">
+      <div className="flex-1 bg-gray-50 overflow-auto">
         <div className="p-6 border-b">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
             <h1 className="text-3xl font-bold text-gray-900">My Dashboard</h1>
