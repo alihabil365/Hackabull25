@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useUser } from '@clerk/nextjs';
+import { createClient } from '@supabase/supabase-js';
 import { motion, AnimatePresence } from 'framer-motion';
 
 type Item = {
@@ -15,10 +17,58 @@ interface SwipeCardProps {
   items: Item[];
 }
 
+// Initialize Supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
 export default function SwipeCard({ items }: SwipeCardProps) {
+  const { user } = useUser();
+  const userId = user?.id;
+
   const [index, setIndex] = useState(0);
   const [matches, setMatches] = useState<Item[]>([]);
   const [showMatch, setShowMatch] = useState(false);
+
+  // Wishlist state: a set of product ids
+  const [wishlist, setWishlist] = useState<Set<string>>(new Set());
+
+  // Fetch wishlist for the current user
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      if (!userId) return;
+      const { data, error } = await supabase
+        .from('wishlists')
+        .select('product_id')
+        .eq('user_id', userId);
+      if (error) {
+        console.error('Error loading wishlist:', error.message);
+        return;
+      }
+      setWishlist(new Set(data.map((entry: { product_id: string }) => entry.product_id)));
+    };
+
+    fetchWishlist();
+  }, [userId]);
+
+  // Toggle wishlist status for a given product id (used automatically on match)
+  const toggleWishlist = async (id: string) => {
+    if (!userId) return;
+    // Only add if not already added
+    if (!wishlist.has(id)) {
+      setWishlist((prev) => {
+        const next = new Set(prev);
+        next.add(id);
+        return next;
+      });
+
+      const { error } = await supabase
+        .from('wishlists')
+        .insert({ user_id: userId, product_id: id });
+      if (error) console.error('Wishlist update failed:', error.message);
+    }
+  };
 
   const currentItem = items[index];
 
@@ -26,7 +76,9 @@ export default function SwipeCard({ items }: SwipeCardProps) {
     if (!currentItem) return;
 
     if (direction === 'right') {
+      // Add the match and automatically add to wishlist
       setMatches((prev) => [...prev, currentItem]);
+      toggleWishlist(currentItem.id);
       setShowMatch(true);
       setTimeout(() => setShowMatch(false), 1500);
     }
@@ -55,42 +107,40 @@ export default function SwipeCard({ items }: SwipeCardProps) {
       <AnimatePresence>
         {currentItem && (
           <motion.div
-          key={currentItem.id}
-          initial={{ opacity: 0, x: 100 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -100 }}
-          transition={{ duration: 0.3 }}
-          drag="x"
-          onDragEnd={(event, info) => {
-            if (info.offset.x > 100) handleSwipe('right');
-            else if (info.offset.x < -100) handleSwipe('left');
-          }}
-          className="relative w-full h-[420px] rounded-2xl overflow-hidden group shadow-2xl"
-        >
-          {/* Background image */}
-          <img
-            src={currentItem.image}
-            alt={currentItem.title}
-            className="w-full h-full object-cover"
-          />
-        
-          {/* Always visible: title + value */}
-          <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-4">
-            <h2 className="text-lg font-bold">{currentItem.title}</h2>
-            <p className="text-green-300 font-semibold">${currentItem.value}</p>
-          </div>
-        
-          {/* Hover-only: description */}
-          <div className="absolute inset-0 flex items-center justify-center bg-black/70 text-white text-sm px-4 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <p>{currentItem.description}</p>
-          </div>
-        </motion.div>
-        
-        
+            key={currentItem.id}
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 }}
+            transition={{ duration: 0.3 }}
+            drag="x"
+            onDragEnd={(event, info) => {
+              if (info.offset.x > 100) handleSwipe('right');
+              else if (info.offset.x < -100) handleSwipe('left');
+            }}
+            className="relative w-full h-[420px] rounded-2xl overflow-hidden group shadow-2xl"
+          >
+            {/* Background image */}
+            <img
+              src={currentItem.image}
+              alt={currentItem.title}
+              className="w-full h-full object-cover"
+            />
+
+            {/* Always visible: title + value */}
+            <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-4">
+              <h2 className="text-lg font-bold">{currentItem.title}</h2>
+              <p className="text-green-300 font-semibold">${currentItem.value}</p>
+            </div>
+
+            {/* Hover-only: description */}
+            <div className="absolute inset-0 flex items-center justify-center bg-black/70 text-white text-sm px-4 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p>{currentItem.description}</p>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Buttons */}
+      {/* Swipe Buttons */}
       {currentItem && (
         <div className="flex gap-6 z-10">
           <button
@@ -108,7 +158,7 @@ export default function SwipeCard({ items }: SwipeCardProps) {
         </div>
       )}
 
-      {/* Show matched item names below */}
+      {/* Display Matches */}
       {matches.length > 0 && (
         <div className="text-sm mt-2 text-center text-green-200">
           Matches: {matches.map((m) => m.title).join(', ')}
@@ -117,3 +167,5 @@ export default function SwipeCard({ items }: SwipeCardProps) {
     </div>
   );
 }
+
+
