@@ -12,8 +12,9 @@ import { createClient } from "@/utils/supabase/client";
 // Components
 import DashboardSidebar from "./components/DashboardSidebar";
 import AddItemDialog from "./components/AddItemDialog";
+import DashboardBody from "./components/DashboardBody";
 
-function Page() {
+export default function DashboardPage() {
   const { user } = useUser();
   const supabase = createClient();
 
@@ -52,19 +53,22 @@ function Page() {
   }, [user]);
 
   return (
-    <div className="h-screen w-full flex">
+    <div className="min-h-screen flex">
       {/* Sidebar */}
       <DashboardSidebar />
 
-      {/* Main Area */}
-      <div className="w-3/4 h-full">
-        {/* Top bar */}
-        <div className="p-6 flex justify-end">
-          <AddItemDialog />
+      {/* Main Content */}
+      <div className="flex-1 bg-gray-50">
+        <div className="p-6 border-b">
+          <div className="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 className="text-3xl font-bold text-gray-900">My Dashboard</h1>
+            <AddItemDialog />
+          </div>
+        </div>
+        <div className="max-w-7xl mx-auto">
+          <DashboardBody />
         </div>
       </div>
     </div>
   );
 }
-
-export default Page;
