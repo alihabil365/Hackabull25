@@ -25,11 +25,9 @@ export default function Home() {
       {/* 🔸 Header */}
       <header className="fixed w-full z-50 flex justify-between items-center p-6 bg-[#0000002f] backdrop-blur-3xl">
         <nav className="flex gap-6 text-sm">
-          <Link href="/">
-            <a className="hover:underline flex items-center gap-4">
-              <GalleryVerticalEnd className="size-4" />
-              <p className="font-bold">Bartr Inc.</p>
-            </a>
+          <Link href="/" className="flex space-x-2 items-center">
+            <GalleryVerticalEnd className="size-4" />
+            <p className="font-bold">Bartr Inc.</p>
           </Link>
           <Link href="/explore" className="hover:underline">
             Explore
