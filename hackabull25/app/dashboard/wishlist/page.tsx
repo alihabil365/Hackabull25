@@ -2,7 +2,7 @@ import WishlistClient from "@/components/WishlistClient";
 
 function page() {
   return (
-    <div className="min-h-screen w-3/4 flex pr-6 bg-gray-50">
+    <div className="min-h-screen w-5/6 flex pr-6 bg-gray-50">
       {/* Main Content */}
       <div className="flex-1 overflow-auto">
         <div className="p-6 border-b">
