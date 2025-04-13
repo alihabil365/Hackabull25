@@ -81,7 +81,8 @@ export default function ProductPage({
         </p>
         <Badge variant="outline" className="text-md">
           <WandSparkles className="h-6 w-6" />
-          Actual market valuation according to AI: $10.00
+          Actual market valuation according to AI: $
+          {product.ai_valuation ? product.ai_valuation.toFixed(2) : "N/A"}
         </Badge>
 
         <div className="flex space-x-2 items-center bg-gray-50 p-4 rounded-xl">

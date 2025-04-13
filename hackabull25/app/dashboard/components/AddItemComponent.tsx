@@ -44,6 +44,7 @@ export default function AddItem({ onItemCreated }: AddItemProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isAiSuggested, setIsAiSuggested] = useState(false);
+  const [aiValuation, setAiValuation] = useState<number | null>(null);
 
   // Transitions
   const [isPending, startTransition] = useTransition();
@@ -99,8 +100,10 @@ export default function AddItem({ onItemCreated }: AddItemProps) {
 
       // Use the average of min and max as the suggested price
       const suggestedPrice = ((analysis.min + analysis.max) / 2).toFixed(2);
+      const aiValue = (analysis.min + analysis.max) / 2;
 
       setPrice(suggestedPrice);
+      setAiValuation(aiValue);
       setIsAiSuggested(true);
       toast("AI has suggested a price based on the image!");
     } catch (error) {
@@ -157,16 +160,17 @@ export default function AddItem({ onItemCreated }: AddItemProps) {
         return;
       }
 
-      // Pass userId to createItem
+      // Create item with ai_valuation
       const created = await createItem(
         name,
         description,
         price,
-        result.data.publicUrl
+        result.data.publicUrl,
+        aiValuation
       );
 
       if (created && onItemCreated) {
-        onItemCreated(created[0].id); // ✅ Pass the new item's ID back to BidModal
+        onItemCreated(created[0].id);
       }
 
       toast("Item has been created successfully.");
