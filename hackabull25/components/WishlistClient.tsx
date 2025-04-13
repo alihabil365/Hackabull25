@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { useUser } from '@clerk/nextjs';
-import Link from 'next/link';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -21,18 +21,39 @@ export default function WishlistClient() {
     const fetchWishlistItems = async () => {
       if (!userId) return;
 
-      const { data, error } = await supabase
+      // 1. Fetch list of product_ids
+      const { data: wishData, error } = await supabase
         .from('wishlists')
-        .select('product_id, products(*)')
+        .select('product_id')
         .eq('user_id', userId);
 
       if (error) {
         console.error('Error fetching wishlist:', error.message);
-      } else {
-        const items = data.map((entry: any) => entry.products);
-        setWishlistItems(items);
+        setLoading(false);
+        return;
       }
 
+      const productIds = wishData.map((w) => w.product_id);
+
+      if (productIds.length === 0) {
+        setWishlistItems([]);
+        setLoading(false);
+        return;
+      }
+
+      // 2. Fetch matching product details
+      const { data: products, error: productError } = await supabase
+        .from('products')
+        .select('*')
+        .in('id', productIds);
+
+      if (productError) {
+        console.error('Error fetching products:', productError.message);
+        setLoading(false);
+        return;
+      }
+
+      setWishlistItems(products);
       setLoading(false);
     };
 
@@ -40,16 +61,16 @@ export default function WishlistClient() {
   }, [userId]);
 
   if (!userId) {
-    return <p className="text-center p-6 text-gray-600">Please sign in to view your wishlist.</p>;
+    return <p className="text-center text-gray-600 mt-10">Please sign in to view your wishlist.</p>;
   }
 
   if (loading) {
-    return <p className="text-center p-6 text-gray-600">Loading wishlist...</p>;
+    return <p className="text-center text-gray-600 mt-10">Loading wishlist...</p>;
   }
 
   if (wishlistItems.length === 0) {
     return (
-      <div className="text-center p-6">
+      <div className="text-center py-12">
         <p className="text-gray-600">Your wishlist is empty.</p>
         <Link href="/explore" className="mt-4 inline-block text-blue-600 hover:underline">
           Go explore items
@@ -59,27 +80,32 @@ export default function WishlistClient() {
   }
 
   return (
-    <div className="min-h-screen p-6 bg-gray-100">
+    <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">My Wishlist</h1>
+        <h1 className="text-3xl font-bold text-black mb-6">My Wishlist</h1>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {wishlistItems.map((item) => (
-            <Link key={item.id} href={`/product/${item.id}`}>
-            <div className="bg-white rounded-lg shadow-md hover:shadow-lg overflow-hidden">
-              <div className="relative h-48 w-full bg-gray-100">
-                <Image
-                  src={item.image || '/next.svg'}
-                  alt={item.name}
-                  fill
-                  className="object-contain p-4"
-                />
-              </div>
-              <div className="p-4">
-                <h2 className="text-xl font-semibold text-black">${item.price.toLocaleString()}</h2>
-                <h3 className="text-lg text-black">{item.name}</h3>
-                <p className="text-gray-600 text-sm">{item.location}</p>
-          
+            <div key={item.id} className="bg-white rounded-lg shadow hover:shadow-md overflow-hidden relative">
+              <Link href={`/product/${item.id}`}>
+                <div>
+                  <div className="relative h-48 w-full bg-gray-100">
+                    <Image
+                      src={item.image || '/next.svg'}
+                      alt={item.name}
+                      fill
+                      className="object-contain p-4"
+                    />
+                  </div>
+                  <div className="p-4">
+                    <h2 className="text-xl font-semibold text-black">${item.price.toLocaleString()}</h2>
+                    <h3 className="text-lg text-black">{item.name}</h3>
+                    <p className="text-gray-600 text-sm">{item.location}</p>
+                  </div>
+                </div>
+              </Link>
+
+              <div className="px-4 pb-4">
                 <button
                   onClick={async (e) => {
                     e.preventDefault();
@@ -87,21 +113,19 @@ export default function WishlistClient() {
                       .from('wishlists')
                       .delete()
                       .match({ user_id: userId, product_id: item.id });
-          
+
                     if (!error) {
                       setWishlistItems((prev) => prev.filter((p) => p.id !== item.id));
                     } else {
                       console.error('Error removing item:', error.message);
                     }
                   }}
-                  className="mt-4 inline-block text-red-600 hover:underline text-sm"
+                  className="mt-2 inline-block text-red-600 hover:underline text-sm"
                 >
                   Remove from Wishlist
                 </button>
               </div>
             </div>
-          </Link>
-          
           ))}
         </div>
       </div>
