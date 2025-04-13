@@ -27,13 +27,15 @@ import uploadImageToSupabase from "@/actions/uploadImageToSupabase";
 // Supabase
 import { createClient } from "@/utils/supabase/client";
 
+// Clerk
+import { useUser } from "@clerk/nextjs";
 
 interface AddItemProps {
   onItemCreated?: (itemId: string) => void;
 }
 
 export default function AddItem({ onItemCreated }: AddItemProps) {
-
+  const { user } = useUser(); // Get the current user from Clerk
 
   // States
   const [name, setName] = useState<string>("");
@@ -127,6 +129,11 @@ export default function AddItem({ onItemCreated }: AddItemProps) {
       return;
     }
 
+    if (!user) {
+      toast("User not authenticated.");
+      return;
+    }
+
     startTransition(async () => {
       // Upload Image
       const supabase = createClient();
@@ -135,20 +142,33 @@ export default function AddItem({ onItemCreated }: AddItemProps) {
       const { error } = await supabase.storage
         .from("productimages")
         .upload(fileName, selectedFile);
-      if (error) console.log(error);
+      if (error) {
+        console.log(error);
+        toast("Failed to upload image.");
+        return;
+      }
 
       // Get Image URL
       const result = supabase.storage
         .from("productimages")
         .getPublicUrl(fileName);
 
-      // Upload to database
-      const created = await createItem(name, description, price, result.data.publicUrl);
+      if (!result.data.publicUrl) {
+        toast("Failed to retrieve image URL.");
+        return;
+      }
+
+      // Pass userId to createItem
+      const created = await createItem(
+        name,
+        description,
+        price,
+        result.data.publicUrl
+      );
 
       if (created && onItemCreated) {
         onItemCreated(created[0].id); // ✅ Pass the new item's ID back to BidModal
       }
-
 
       toast("Item has been created successfully.");
     });

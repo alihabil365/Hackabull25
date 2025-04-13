@@ -1,4 +1,4 @@
-'use server';
+"use server";
 
 import { createClient } from "@/utils/supabase/server";
 import { auth } from "@clerk/nextjs/server";
@@ -21,7 +21,7 @@ export default async function createItem(
       description,
       price: parseFloat(price),
       image: imageUrl,
-      owner_id: userId, // ✅ Now works correctly
+      userId: userId, // ✅ Now works correctly
     })
     .select();
 
