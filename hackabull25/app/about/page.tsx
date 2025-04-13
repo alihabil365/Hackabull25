@@ -1,13 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { GalleryVerticalEnd } from "lucide-react";
 import {
-  FaFacebookF,
-  FaTwitter,
-  FaInstagram,
-  FaLinkedinIn,
-} from "react-icons/fa";
+  GalleryVerticalEnd,
+  FacebookIcon,
+  TwitterIcon,
+  InstagramIcon,
+  LinkedinIcon,
+} from "lucide-react";
+// import {
+//   FaFacebookF,
+//   FaTwitter,
+//   FaInstagram,
+//   FaLinkedinIn,
+// } from "react-icons/fa";
+
+import {} from "lucide-react";
 
 export default function AboutPage() {
   return (
@@ -15,21 +23,15 @@ export default function AboutPage() {
       {/* Fixed Header */}
       <header className="fixed top-0 w-full z-50 flex justify-between items-center p-6 bg-[#0000002f] backdrop-blur-3xl">
         <nav className="flex gap-6 text-sm">
-          <Link href="/" legacyBehavior>
-            <a className="hover:underline flex items-center gap-4">
-              <GalleryVerticalEnd className="size-4" />
-              <p className="font-bold">Bartr Inc.</p>
-            </a>
+          <Link href="/">
+            <GalleryVerticalEnd className="size-4" />
+            <p className="font-bold">Bartr Inc.</p>
           </Link>
-          <Link href="/explore" className="hover:underline">
-            Explore
-          </Link>
+
           <Link href="/about" className="hover:underline">
             About
           </Link>
-          <Link href="/swipe" className="hover:underline">
-            Swipe
-          </Link>
+
           <Link href="/dashboard" className="hover:underline">
             Dashboard
           </Link>
@@ -45,10 +47,9 @@ export default function AboutPage() {
           <div className="bg-gray-800/10 backdrop-blur-3xl p-8 rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
             <h2 className="text-3xl font-bold mb-4">Our Mission</h2>
             <p className="text-lg leading-relaxed">
-              No currency left? No problem. Bartr transforms old
-              belongings into new opportunities by redefining trading in a
-              post-apocalyptic world. We make trading fun, fair, and
-              game-like.
+              No currency left? No problem. Bartr transforms old belongings into
+              new opportunities by redefining trading in a post-apocalyptic
+              world. We make trading fun, fair, and game-like.
             </p>
           </div>
           <div className="bg-gray-800/10 backdrop-blur-3xl p-8 rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
@@ -63,19 +64,17 @@ export default function AboutPage() {
           <div className="bg-gray-800/10 backdrop-blur-3xl p-8 rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
             <h2 className="text-3xl font-bold mb-4">Key Features</h2>
             <p className="text-lg leading-relaxed">
-              • 📸 Upload item image  
-              • 📝 Enter title, description, and desired trade  
-              • 🤖 Gemini AI for instant value estimation  
-              • 🔄 Auto-match within ±10% of value  
-              • ❤️ Gamified swipe interface
+              • 📸 Upload item image • 📝 Enter title, description, and desired
+              trade • 🤖 Gemini AI for instant value estimation • 🔄 Auto-match
+              within ±10% of value • ❤️ Gamified swipe interface
             </p>
           </div>
           <div className="bg-gray-800/10 backdrop-blur-3xl p-8 rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
             <h2 className="text-3xl font-bold mb-4">Join the Revolution</h2>
             <p className="text-lg leading-relaxed">
               Step into a community where traditional currency is obsolete.
-              Trade smart and have fun. With Bartr, your everyday
-              items become the keys to a brave new world of bartering.
+              Trade smart and have fun. With Bartr, your everyday items become
+              the keys to a brave new world of bartering.
             </p>
           </div>
         </div>
@@ -89,7 +88,7 @@ export default function AboutPage() {
               rel="noopener noreferrer"
               className="text-white hover:text-blue-500 text-2xl"
             >
-              <FaFacebookF />
+              <FacebookIcon />
             </Link>
             <Link
               href="https://twitter.com"
@@ -97,7 +96,7 @@ export default function AboutPage() {
               rel="noopener noreferrer"
               className="text-white hover:text-blue-400 text-2xl"
             >
-              <FaTwitter />
+              <TwitterIcon />
             </Link>
             <Link
               href="https://www.instagram.com"
@@ -105,7 +104,7 @@ export default function AboutPage() {
               rel="noopener noreferrer"
               className="text-white hover:text-pink-500 text-2xl"
             >
-              <FaInstagram />
+              <InstagramIcon />
             </Link>
             <Link
               href="https://www.linkedin.com"
@@ -113,7 +112,7 @@ export default function AboutPage() {
               rel="noopener noreferrer"
               className="text-white hover:text-blue-700 text-2xl"
             >
-              <FaLinkedinIn />
+              <LinkedinIcon />
             </Link>
           </div>
           <p className="mt-4 text-gray-400">
