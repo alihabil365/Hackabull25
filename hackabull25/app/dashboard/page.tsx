@@ -56,11 +56,12 @@ export default function DashboardPage() {
     <div className="min-h-screen flex">
       {/* Main Content */}
       <div className="flex-1 bg-gray-50 overflow-auto">
-        <div className="p-6 border-b">
+        <div className="p-6">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
             <h1 className="text-3xl font-bold text-gray-900">My Dashboard</h1>
             <AddItemDialog />
           </div>
+          <hr className="mt-6" />
         </div>
         <div className="max-w-7xl mx-auto">
           <DashboardBody />

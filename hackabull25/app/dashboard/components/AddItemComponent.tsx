@@ -256,7 +256,7 @@ export default function AddItem({ onItemCreated }: AddItemProps) {
               className="cursor-pointer bg-gradient-to-r from-[#f89b29] to-[#ff0f7b] active:scale-99 px-4 py-2 rounded-lg text-white text-sm duration-100 ease-in-out z-50"
               disabled={isPending}
             >
-              {!isPending ? <p> Create Quiz Set</p> : <LoadingCircleSpinner />}
+              {!isPending ? <p>Add Item</p> : <LoadingCircleSpinner />}
             </Button>
           </div>
         </div>

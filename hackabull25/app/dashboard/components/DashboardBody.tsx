@@ -257,7 +257,7 @@ export default function DashboardBody() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="px-6 space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Current Bids Card */}
         <Card>
@@ -298,8 +298,10 @@ export default function DashboardBody() {
                             className="object-cover rounded-md"
                           />
                         </div>
-                        <div>
-                          <p className="font-medium">{targetItem.name}</p>
+                        <div className="flex-1 w-48">
+                          <p className="font-medium line-clamp-1">
+                            {targetItem.name}
+                          </p>
                           <p className="text-sm text-gray-500">
                             ${targetItem.price.toFixed(2)}
                           </p>

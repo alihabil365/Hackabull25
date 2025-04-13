@@ -7,6 +7,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
 import { CheckIcon, XIcon } from "lucide-react";
 
+import { toast } from "sonner";
+import Link from "next/link";
+
 type Item = {
   id: string;
   image: string;
@@ -85,6 +88,7 @@ export default function SwipeCard({ items }: SwipeCardProps) {
       toggleWishlist(currentItem.id);
       setShowMatch(true);
       setTimeout(() => setShowMatch(false), 1500);
+      toast("Item has been added to wishlist");
     }
 
     setIndex((prev) => prev + 1);
@@ -92,21 +96,6 @@ export default function SwipeCard({ items }: SwipeCardProps) {
 
   return (
     <div className="w-full max-w-sm h-[520px] flex flex-col items-center justify-center gap-6 relative">
-      {/* Match Popup */}
-      <AnimatePresence>
-        {showMatch && (
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1.1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            className="absolute top-0 z-20 bg-green-600 text-white text-xl font-bold px-6 py-3 rounded-xl shadow-xl"
-          >
-            ✅ It's a Match!
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Swipeable Card */}
       <AnimatePresence>
         {currentItem && (
@@ -168,8 +157,8 @@ export default function SwipeCard({ items }: SwipeCardProps) {
 
       {/* Display Matches */}
       {matches.length > 0 && (
-        <div className="text-sm mt-2 text-center text-green-200">
-          Matches: {matches.map((m) => m.title).join(", ")}
+        <div className="text-sm mt-2 text-center bg-white px-4 py-2 border-2 rounded-xl">
+          <Link href={"/dashboard/wishlist"}>Go to wishlist</Link>
         </div>
       )}
     </div>
