@@ -1,8 +1,12 @@
 "use client";
 
-import Image from "next/image";
+// React
 import { useState } from "react";
 
+// Next
+import Image from "next/image";
+
+// Types
 interface Seller {
   name: string;
   profileImage: string;
@@ -36,7 +40,7 @@ export default function ProductDetail({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen flex">
       <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left side - Image Gallery */}
         <div className="relative h-[400px] md:h-[600px] bg-black rounded-lg overflow-hidden">
@@ -47,32 +51,6 @@ export default function ProductDetail({
             className="object-contain"
             priority
           />
-          {images.length > 1 && (
-            <>
-              <button
-                onClick={() =>
-                  setCurrentImageIndex((prev) =>
-                    prev > 0 ? prev - 1 : images.length - 1
-                  )
-                }
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 rounded-full p-2 hover:bg-white"
-                aria-label="Previous image"
-              >
-                ←
-              </button>
-              <button
-                onClick={() =>
-                  setCurrentImageIndex((prev) =>
-                    prev < images.length - 1 ? prev + 1 : 0
-                  )
-                }
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 rounded-full p-2 hover:bg-white"
-                aria-label="Next image"
-              >
-                →
-              </button>
-            </>
-          )}
         </div>
 
         {/* Right side - Product Info */}
