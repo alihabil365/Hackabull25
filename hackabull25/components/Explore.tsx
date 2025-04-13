@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
+import { useUser } from '@clerk/nextjs';
 
 interface MarketplaceItem {
   id: string;
@@ -30,6 +31,10 @@ const supabase = createClient(
 );
 
 export default function Explore() {
+  const { user } = useUser();
+  const userId = user?.id;
+
+  
   const [filters, setFilters] = useState<Filters>({
     search: '',
     minPrice: '',
@@ -40,7 +45,7 @@ export default function Explore() {
 
   const [items, setItems] = useState<MarketplaceItem[]>([]);
   const [wishlist, setWishlist] = useState<Set<string>>(new Set());
-
+  
   // 🟢 Fetch from Supabase
   useEffect(() => {
     const fetchItems = async () => {
@@ -66,6 +71,27 @@ export default function Explore() {
 
     fetchItems();
   }, []);
+
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      if (!userId) return;
+  
+      const { data, error } = await supabase
+        .from('wishlists')
+        .select('product_id')
+        .eq('user_id', userId);
+  
+      if (error) {
+        console.error("Error loading wishlist:", error.message);
+        return;
+      }
+  
+      setWishlist(new Set(data.map((entry) => entry.product_id)));
+    };
+  
+    fetchWishlist();
+  }, [userId]);
+  
 
   // 🔍 Filtering Logic
   const filteredItems = useMemo(() => {
@@ -95,14 +121,24 @@ export default function Explore() {
   const locations = useMemo(() => [...new Set(items.map((i) => i.location))], [items]);
   const conditions = useMemo(() => [...new Set(items.map((i) => i.condition))], [items]);
 
-  const toggleWishlist = (e: React.MouseEvent, id: string) => {
+  const toggleWishlist = async (e: React.MouseEvent, id: string) => {
     e.preventDefault();
+    if (!userId) return alert("You must be logged in to use wishlist");
+  
+    const alreadyInWishlist = wishlist.has(id);
     setWishlist((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      alreadyInWishlist ? next.delete(id) : next.add(id);
       return next;
     });
+  
+    const { error } = alreadyInWishlist
+      ? await supabase.from('wishlists').delete().match({ user_id: userId, product_id: id })
+      : await supabase.from('wishlists').insert({ user_id: userId, product_id: id });
+  
+    if (error) console.error("Wishlist update failed:", error.message);
   };
+  
 
   const handleFilterChange = (key: keyof Filters, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -209,6 +245,7 @@ export default function Explore() {
               <button
                 onClick={(e) => toggleWishlist(e, item.id)}
                 className="absolute right-2 top-2 z-10 p-2"
+                title={wishlist.has(item.id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
               >
                 <svg
                   className={`w-6 h-6 ${
@@ -231,6 +268,7 @@ export default function Explore() {
                   />
                 </svg>
               </button>
+
 
               <Link href={`/product/${item.id}`}>
                 <div className="bg-white rounded-lg shadow-md hover:shadow-lg overflow-hidden">
