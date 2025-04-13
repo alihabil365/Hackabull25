@@ -329,9 +329,9 @@ export default function DashboardBody() {
                           {bids.map((bid) => (
                             <div
                               key={bid.id}
-                              className="flex items-center justify-between p-3 bg-white border rounded-lg"
+                              className="flex flex-col items-center justify-between p-3 bg-white border rounded-lg"
                             >
-                              <div className="flex items-center space-x-3">
+                              <div className="flex items-center space-x-3 w-full">
                                 <div className="relative h-12 w-12">
                                   <Image
                                     src={bid.offered_item.image}
@@ -345,14 +345,61 @@ export default function DashboardBody() {
                                     {bid.offered_item.name}
                                   </p>
                                   <p className="text-sm text-gray-500">
-                                    by {bid.bidder.firstName}{" "}
-                                    {bid.bidder.lastName}
+                                    ${bid.offered_item.price.toFixed(2)} by{" "}
+                                    {bid.bidder.firstName} {bid.bidder.lastName}
                                   </p>
                                 </div>
                               </div>
-                              <p className="font-bold">
-                                ${bid.offered_item.price.toFixed(2)}
-                              </p>
+                              <div className="flex items-center space-x-2">
+                                <p className="font-bold"></p>
+                              </div>
+                              <div className="flex space-x-1 w-full mt-2">
+                                <Button
+                                  size="sm"
+                                  className="bg-green-500 hover:bg-green-600"
+                                  onClick={async () => {
+                                    const success = await updateBidStatus(
+                                      bid.id,
+                                      "accepted",
+                                      bid.bidder_id,
+                                      user?.id || "",
+                                      targetItem.name,
+                                      bid.offered_item.name
+                                    );
+                                    if (success) {
+                                      toast.success("Bid accepted!");
+                                      fetchUserBids();
+                                    } else {
+                                      toast.error("Failed to accept bid");
+                                    }
+                                  }}
+                                >
+                                  Accept
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="border-red-500 text-red-500 hover:bg-red-50"
+                                  onClick={async () => {
+                                    const success = await updateBidStatus(
+                                      bid.id,
+                                      "rejected",
+                                      bid.bidder_id,
+                                      user?.id || "",
+                                      targetItem.name,
+                                      bid.offered_item.name
+                                    );
+                                    if (success) {
+                                      toast.success("Bid rejected");
+                                      fetchUserBids();
+                                    } else {
+                                      toast.error("Failed to reject bid");
+                                    }
+                                  }}
+                                >
+                                  Reject
+                                </Button>
+                              </div>
                             </div>
                           ))}
                         </div>

@@ -20,7 +20,6 @@ export default function Home() {
       />
 
       {/* 🔸 Overlay */}
-      {/* <div className="absolute inset-0 bg-black/60 z-0" /> */}
 
       {/* 🔸 Header */}
       <header className="fixed w-full z-50 flex justify-between items-center p-6 bg-[#0000002f] backdrop-blur-3xl">
