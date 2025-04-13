@@ -16,7 +16,7 @@ function DashboardSidebar() {
   };
 
   return (
-    <div className="w-1/4 h-full p-6 bg-gray-50 flex flex-col space-y-6">
+    <div className="w-1/4 h-full p-6 bg-gray-50 flex flex-col space-y-6 h-screen">
       {/* Logo */}
       <Link href="/dashboard" className="flex items-center gap-4">
         <GalleryVerticalEnd className="size-4" />

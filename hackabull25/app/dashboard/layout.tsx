@@ -1,9 +1,4 @@
 function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <div>
-      {children}
-      hello world
-    </div>
-  );
+  return <div>{children}</div>;
 }
 export default Layout;
