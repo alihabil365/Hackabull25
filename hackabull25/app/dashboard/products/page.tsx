@@ -27,7 +27,7 @@ interface Product {
   image: string;
   status: "active" | "pending" | "traded";
   created_at: string;
-  user_id: string;
+  userId: string;
 }
 
 export default function ProductsPage() {

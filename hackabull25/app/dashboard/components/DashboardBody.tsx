@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useUser } from "@clerk/nextjs";
+import { createClient } from "@/utils/supabase/client";
 
 // ShadCn
 import { Button } from "@/components/ui/button";
@@ -20,6 +22,7 @@ interface UserItem {
   price: number;
   image: string;
   status: "active" | "pending" | "traded";
+  description: string;
 }
 
 interface Bid {
@@ -40,24 +43,12 @@ interface Notification {
 }
 
 export default function DashboardBody() {
-  // Example data - replace with real data from your backend
-  const [userItems] = useState<UserItem[]>([
-    {
-      id: "1",
-      name: "Vintage Camera",
-      price: 299.99,
-      image: "/images/photo-1712133611163-3dc3cadecf7f.avif",
-      status: "active",
-    },
-    {
-      id: "2",
-      name: "Gaming Console",
-      price: 499.99,
-      image: "/images/photo-1653674359178-57dd04935bf6.avif",
-      status: "pending",
-    },
-  ]);
+  const { user } = useUser();
+  const [userItems, setUserItems] = useState<UserItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
+  // Example data for bids and notifications - these can be updated later to use real data
   const [currentBids] = useState<Bid[]>([
     {
       id: "1",
@@ -100,6 +91,30 @@ export default function DashboardBody() {
       read: true,
     },
   ]);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserItems();
+    }
+  }, [user]);
+
+  const fetchUserItems = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("userId", user?.id)
+        .order("created_at", { ascending: false })
+        .limit(3); // Only fetch the 3 most recent items for the dashboard
+
+      if (error) throw error;
+      setUserItems(data || []);
+    } catch (error) {
+      console.error("Error fetching user items:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -147,45 +162,55 @@ export default function DashboardBody() {
           <CardHeader>
             <CardTitle className="flex justify-between items-center">
               <span>My Items</span>
-              <Button variant="outline" size="sm" asChild>
+              {/* <Button variant="outline" size="sm" asChild>
                 <Link href="/dashboard/add-item">+ Add Item</Link>
-              </Button>
+              </Button> */}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {userItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg"
-                >
-                  <div className="relative h-16 w-16">
-                    <Image
-                      src={item.image}
-                      alt={item.name}
-                      fill
-                      className="object-cover rounded-md"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium">{item.name}</p>
-                    <p className="text-sm text-gray-500">
-                      ${item.price.toFixed(2)}
-                    </p>
-                  </div>
-                  <Badge
-                    variant={
-                      item.status === "active"
-                        ? "default"
-                        : item.status === "pending"
-                        ? "secondary"
-                        : "outline"
-                    }
-                  >
-                    {item.status}
-                  </Badge>
+              {loading ? (
+                <div className="text-center py-4">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
                 </div>
-              ))}
+              ) : userItems.length === 0 ? (
+                <div className="text-center py-4">
+                  <p className="text-gray-500">No items added yet</p>
+                </div>
+              ) : (
+                userItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg"
+                  >
+                    <div className="relative h-16 w-16">
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        fill
+                        className="object-cover rounded-md"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium">{item.name}</p>
+                      <p className="text-sm text-gray-500">
+                        ${item.price.toFixed(2)}
+                      </p>
+                    </div>
+                    <Badge
+                      variant={
+                        item.status === "active"
+                          ? "default"
+                          : item.status === "pending"
+                          ? "secondary"
+                          : "outline"
+                      }
+                    >
+                      {item.status}
+                    </Badge>
+                  </div>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
