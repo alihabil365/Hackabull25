@@ -30,10 +30,12 @@ export default function Home() {
       {/* 🔸 Header */}
       <header className="fixed w-full z-50 flex justify-between items-center p-6 bg-[#0000002f] backdrop-blur-3xl">
         <nav className="flex gap-6 text-sm">
-          <div className="flex items-center gap-4">
-            <GalleryVerticalEnd className="size-4" />
-            <p className="font-bold">Bartr Inc.</p>
-          </div>
+          <Link href="/" legacyBehavior>
+            <a className="hover:underline flex items-center gap-4">
+              <GalleryVerticalEnd className="size-4" />
+              <p className="font-bold">Bartr Inc.</p>
+            </a>
+          </Link>
           <Link href="/explore" className="hover:underline">
             Explore
           </Link>
