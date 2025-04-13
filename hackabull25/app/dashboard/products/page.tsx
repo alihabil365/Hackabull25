@@ -77,7 +77,7 @@ export default function ProductsPage() {
   };
 
   return (
-    <div className="min-h-screen w-3/4 flex pr-6 bg-gray-50">
+    <div className="min-h-screen w-3/4 flex pr-6 bg-gray-50 overflow-auto">
       {/* Sidebar */}
 
       {/* Main Content */}

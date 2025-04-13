@@ -15,10 +15,10 @@ export default async function createNotification(
   const { data, error } = await supabase
     .from("notifications")
     .insert({
-      user_id: userId,
       type,
       title,
       body,
+      user_id: userId,
     })
     .select();
 
