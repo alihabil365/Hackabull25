@@ -150,11 +150,11 @@ export default function Explore() {
   };
 
   return (
-    <div className="flex flex-col py-6">
+    <div className="w-full columns-2 gap-6 px-6 pb-6">
       {filteredItems.map((item) => (
-        <div key={item.id} className="relative">
+        <div key={item.id} className="relative mb-6">
           <Link href={`/product/${item.id}`}>
-            <div className="border-2 flex rounded-lg overflow-hidden mb-6 ">
+            <div className="border-2 flex rounded-lg overflow-hidden">
               <div className="relative h-48 w-2/5 bg-gray-100">
                 <Image
                   src={item.imageUrl}

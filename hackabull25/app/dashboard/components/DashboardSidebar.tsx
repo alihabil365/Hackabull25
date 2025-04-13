@@ -8,6 +8,8 @@ import {
   User,
   CompassIcon,
   HeartIcon,
+  GitBranchIcon,
+  GitCompareArrows,
 } from "lucide-react";
 
 function DashboardSidebar() {
@@ -20,8 +22,12 @@ function DashboardSidebar() {
   return (
     <div className="w-1/5 p-6 bg-gray-50 flex flex-col h-screen border-r">
       {/* Logo */}
-      <Link href="/dashboard" className="flex items-center gap-4 mb-6">
+      {/* <Link href="/dashboard" className="flex items-center gap-4 mb-6">
         <Image src="/Logo.svg" alt="Bartr Logo" width={150} height={150} />
+      </Link> */}
+      <Link href="/dashboard" className="flex items-center space-x-2">
+        <GitCompareArrows className="h-6 w-6 text-purple-500" />
+        <p className="text-3xl font-black">Bartr</p>
       </Link>
 
       {/* Main Menu */}
