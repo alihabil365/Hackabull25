@@ -5,6 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
+import { CheckIcon, XIcon } from "lucide-react";
 
 type Item = {
   id: string;
@@ -147,18 +148,20 @@ export default function SwipeCard({ items }: SwipeCardProps) {
 
       {/* Swipe Buttons */}
       {currentItem && (
-        <div className="flex space-x-4 z-10 w-full">
+        <div className="flex space-x-4 justify-center z-10 w-full">
           <Button
             onClick={() => handleSwipe("left")}
-            className="px-6 py-2 w-1/2 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold"
+            className="px-6 py-2  rounded-xl bg-red-50 text-red-500 hover:bg-red-500 font-semibold"
           >
-            Skip ❌
+            <XIcon className="h-6 w-6" />
+            Skip
           </Button>
           <Button
             onClick={() => handleSwipe("right")}
-            className="px-6 py-2 w-1/2 rounded-xl bg-green-500 hover:bg-green-600 text-white font-semibold"
+            className="px-6 py-2  rounded-xl bg-green-50 text-green-500 font-semibold"
           >
-            Match ✅
+            <CheckIcon className="h-6 w-6" />
+            Match
           </Button>
         </div>
       )}
