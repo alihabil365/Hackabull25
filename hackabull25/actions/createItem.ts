@@ -7,12 +7,13 @@ export default async function createItem(
   name: string,
   description: string,
   price: string,
-  imageUrl: string
+  imageUrl: string,
+  aiValuation: number | null
 ) {
   console.log("hello world");
 
   const supabase = await createClient();
-  const { userId } = await auth(); // ✅ Fix: Await the auth() call
+  const { userId } = await auth();
 
   const { data, error } = await supabase
     .from("products")
@@ -21,7 +22,8 @@ export default async function createItem(
       description,
       price: parseFloat(price),
       image: imageUrl,
-      userId: userId, // ✅ Now works correctly
+      userId: userId,
+      ai_valuation: aiValuation
     })
     .select();
 

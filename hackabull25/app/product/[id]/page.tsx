@@ -76,10 +76,13 @@ export default function ProductPage({
 
       <div className="w-1/2 flex flex-col justify-center h-screen p-6 space-y-2">
         <p className="text-3xl font-bold">{product.name}</p>
-        <p className="text-xl font-medium">Seller valuation: ${product.price}</p>
+        <p className="text-xl font-medium">
+          Seller valuation: ${product.price}
+        </p>
         <Badge variant="outline" className="text-md">
           <WandSparkles className="h-6 w-6" />
-          Actual market valuation according to AI: $10.00
+          Actual market valuation according to AI: $
+          {product.ai_valuation ? product.ai_valuation.toFixed(2) : "N/A"}
         </Badge>
 
         <div className="flex space-x-2 items-center bg-gray-50 p-4 rounded-xl">
@@ -160,9 +163,9 @@ export default function ProductPage({
                     toast.error("You must be signed in to place a bid.");
                     return;
                   }
-                
+
                   const supabase = createClient();
-                
+
                   // Check for existing bids
                   const { data: existing, error: checkError } = await supabase
                     .from("bids")
@@ -170,39 +173,45 @@ export default function ProductPage({
                     .eq("bidder_id", user.id)
                     .eq("target_item_id", product.id)
                     .in("offered_item_id", selectedItemIds);
-                
+
                   if (checkError) {
-                    console.error("Error checking for existing bids:", checkError.message);
+                    console.error(
+                      "Error checking for existing bids:",
+                      checkError.message
+                    );
                     toast.error("Failed to check for existing bids.");
                     return; // stop further execution
                   }
-                
+
                   if (existing && existing.length > 0) {
-                    toast.warning("Some of your bids already exist. We'll update them.");
+                    toast.warning(
+                      "Some of your bids already exist. We'll update them."
+                    );
                   }
-                
+
                   const inserts = selectedItemIds.map((itemId) => ({
                     bidder_id: user.id,
                     offered_item_id: itemId,
                     target_item_id: product.id,
                     status: "pending",
                   }));
-                
-                  const { error: insertError } = await supabase.from("bids").upsert(inserts, {
-                    onConflict: "bidder_id,offered_item_id,target_item_id",
-                  });
-                
+
+                  const { error: insertError } = await supabase
+                    .from("bids")
+                    .upsert(inserts, {
+                      onConflict: "bidder_id,offered_item_id,target_item_id",
+                    });
+
                   if (insertError) {
                     console.error("Bid failed:", insertError.message);
                     toast.error("Failed to place bid.");
                     return; // 🛑 make sure we stop here
                   }
-                
+
                   // ✅ Success
                   toast.success("Your bid(s) have been submitted!");
                   setSelectedItemIds([]);
                 }}
-                
               >
                 Submit {selectedItemIds.length} Bid
                 {selectedItemIds.length > 1 ? "s" : ""}
