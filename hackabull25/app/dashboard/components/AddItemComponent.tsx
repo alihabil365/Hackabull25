@@ -27,7 +27,14 @@ import uploadImageToSupabase from "@/actions/uploadImageToSupabase";
 // Supabase
 import { createClient } from "@/utils/supabase/client";
 
-export default function AddItem() {
+
+interface AddItemProps {
+  onItemCreated?: (itemId: string) => void;
+}
+
+export default function AddItem({ onItemCreated }: AddItemProps) {
+
+
   // States
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -136,12 +143,12 @@ export default function AddItem() {
         .getPublicUrl(fileName);
 
       // Upload to database
-      const databaseRef = await createItem(
-        name,
-        description,
-        price,
-        result.data.publicUrl
-      );
+      const created = await createItem(name, description, price, result.data.publicUrl);
+
+      if (created && onItemCreated) {
+        onItemCreated(created[0].id); // ✅ Pass the new item's ID back to BidModal
+      }
+
 
       toast("Item has been created successfully.");
     });
