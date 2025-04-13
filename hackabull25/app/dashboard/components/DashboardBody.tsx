@@ -274,7 +274,7 @@ export default function DashboardBody() {
               </Badge>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="h-108 overflow-auto">
             <div className="space-y-4">
               {loadingBids ? (
                 <div className="text-center py-4">
@@ -422,7 +422,7 @@ export default function DashboardBody() {
               </Button> */}
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="h-108 overflow-auto">
             <div className="space-y-4">
               {loading ? (
                 <div className="text-center py-4">
@@ -480,7 +480,7 @@ export default function DashboardBody() {
               </Badge>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="h-108 overflow-auto">
             <div className="space-y-4">
               {loadingNotifications ? (
                 <div className="text-center py-4">
@@ -533,7 +533,7 @@ export default function DashboardBody() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="max-h-[300px] overflow-y-auto space-y-3 pr-2">
+              <div className="max-h-[350px] overflow-y-auto space-y-3 pr-2">
                 {loadingWishlist ? (
                   <div className="text-center py-4">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>

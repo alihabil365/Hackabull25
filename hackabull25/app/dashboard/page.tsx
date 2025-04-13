@@ -53,7 +53,7 @@ export default function DashboardPage() {
   }, [user]);
 
   return (
-    <div className="h-screen w-3/4 bg-gray-50 flex flex-col relative overflow-scroll">
+    <div className="h-screen w-5/6 bg-gray-50 flex flex-col relative overflow-scroll">
       {/* Main Content */}
       <div className="p-6">
         <div className="w-full mx-auto flex justify-between items-center">
