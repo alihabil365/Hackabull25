@@ -141,21 +141,13 @@ export default function ProductsPage() {
                     <span className="text-sm">${product.price.toFixed(2)}</span>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex justify-between items-center">
-                      {/* Uncomment to enable edit/delete actions */}
-                      {/*
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm" className="text-blue-600 hover:text-blue-700">
-                          <Edit2Icon className="h-4 w-4" />
-                        </Button>
-                        <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700" onClick={() => handleDelete(product.id)}>
-                          <Trash2Icon className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      */}
-                    </div>
-                    <div className="px-4 py-2 bg-black text-white hover:bg-gray-800 transition w-full rounded-xl">
-                      <Link href={`/swipe/${product.id}`}>Go to Swiper</Link>
+                    <div className="flex justify-between items-start">
+                      <Link
+                        className="px-4 py-2 bg-black text-white hover:bg-gray-800 transition w-full rounded-xl"
+                        href={`/swipe/${product.id}`}
+                      >
+                        Go to Swiper
+                      </Link>
                     </div>
                   </CardContent>
                 </Card>
