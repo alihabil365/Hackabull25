@@ -1,7 +1,8 @@
-"use client";
+'use client';
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 
 // Components
@@ -130,31 +131,35 @@ export default function ProductsPage() {
                   </div>
                   <CardHeader className="m-0">
                     <CardTitle className="flex justify-between items-start">
-                      <p className="text-xl truncate w-full">{product.name}</p>
+                      {/* Wrap the product name in a Link to navigate to /product/{product.id} */}
+                      <Link
+                        href={`/product/${product.id}`}
+                        className="text-xl truncate w-full"
+                      >
+                        {product.name}
+                      </Link>
                     </CardTitle>
                     <span className="text-sm">${product.price.toFixed(2)}</span>
                   </CardHeader>
                   <CardContent>
                     <div className="flex justify-between items-center">
-                      {/* <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-blue-600 hover:text-blue-700"
-                        >
+                      {/* Uncomment to enable edit/delete actions */}
+                      {/*
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm" className="text-blue-600 hover:text-blue-700">
                           <Edit2Icon className="h-4 w-4" />
                         </Button>
-                        <Button
-                          variant="outline"`
-                          size="sm"
-                          className="text-red-600 hover:text-red-700"
-                          onClick={() => handleDelete(product.id)}
-                        >
+                        <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700" onClick={() => handleDelete(product.id)}>
                           <Trash2Icon className="h-4 w-4" />
                         </Button>
-                      </div> */}
+                      </div>
+                      */}
                     </div>
-                    <Button className="w-full">Go to swiper</Button>
+                    <div className="px-4 py-2 bg-black text-white hover:bg-gray-800 transition w-full rounded-xl">
+                      <Link href={`/swipe/${product.id}`}  >
+                          Go to swiper
+                      </Link>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
@@ -165,3 +170,4 @@ export default function ProductsPage() {
     </div>
   );
 }
+
