@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import ProductDetail from '@/components/productDetail';
 import { createClient } from '@supabase/supabase-js';
+import BidModal from '@/components/BidModal';
+import { useUser } from '@clerk/nextjs';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -48,6 +50,19 @@ export default function ProductClientPage({ id }: { id: string }) {
       rating: 4.8,
     },
   };
+  const { user } = useUser();
 
-  return <ProductDetail {...productData} />;
+  return (
+    <div className="space-y-6">
+      <ProductDetail {...productData} />
+  
+      {user?.id !== product.owner_id && (
+        <div className="text-center">
+          <BidModal targetItemId={product.id} />
+        </div>
+      )}
+    </div>
+  );
 }
+
+
