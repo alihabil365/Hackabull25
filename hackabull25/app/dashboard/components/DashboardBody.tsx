@@ -153,6 +153,8 @@ export default function DashboardBody() {
 
       if (receivedError) throw receivedError;
 
+      console.log(userItems);
+
       // Type cast the response to match our Bid interface
       const typedBids = (receivedBids || []).map((bid) => {
         // Extract the first (and should be only) item from the arrays
@@ -189,8 +191,7 @@ export default function DashboardBody() {
         .from("products")
         .select("*")
         .eq("userId", user?.id)
-        .order("created_at", { ascending: false })
-        .limit(3); // Only fetch the 3 most recent items for the dashboard
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setUserItems(data || []);
@@ -327,7 +328,7 @@ export default function DashboardBody() {
                         {bids.map((bid) => (
                           <div
                             key={bid.id}
-                            className="flex items-center justify-between p-3 bg-white border rounded-lg"
+                            className="flex flex-col items-center justify-between p-3 bg-white border rounded-lg"
                           >
                             <div className="flex items-center space-x-3">
                               <div className="relative h-12 w-12">
@@ -352,53 +353,53 @@ export default function DashboardBody() {
                               <p className="font-bold">
                                 ${bid.offered_item.price.toFixed(2)}
                               </p>
-                              <div className="flex space-x-1">
-                                <Button
-                                  size="sm"
-                                  className="bg-green-500 hover:bg-green-600"
-                                  onClick={async () => {
-                                    const success = await updateBidStatus(
-                                      bid.id,
-                                      "accepted",
-                                      bid.bidder_id,
-                                      user?.id || "",
-                                      targetItem.name,
-                                      bid.offered_item.name
-                                    );
-                                    if (success) {
-                                      toast.success("Bid accepted!");
-                                      fetchUserBids();
-                                    } else {
-                                      toast.error("Failed to accept bid");
-                                    }
-                                  }}
-                                >
-                                  Accept
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="border-red-500 text-red-500 hover:bg-red-50"
-                                  onClick={async () => {
-                                    const success = await updateBidStatus(
-                                      bid.id,
-                                      "rejected",
-                                      bid.bidder_id,
-                                      user?.id || "",
-                                      targetItem.name,
-                                      bid.offered_item.name
-                                    );
-                                    if (success) {
-                                      toast.success("Bid rejected");
-                                      fetchUserBids();
-                                    } else {
-                                      toast.error("Failed to reject bid");
-                                    }
-                                  }}
-                                >
-                                  Reject
-                                </Button>
-                              </div>
+                            </div>
+                            <div className="flex space-x-1">
+                              <Button
+                                size="sm"
+                                className="bg-green-500 hover:bg-green-600"
+                                onClick={async () => {
+                                  const success = await updateBidStatus(
+                                    bid.id,
+                                    "accepted",
+                                    bid.bidder_id,
+                                    user?.id || "",
+                                    targetItem.name,
+                                    bid.offered_item.name
+                                  );
+                                  if (success) {
+                                    toast.success("Bid accepted!");
+                                    fetchUserBids();
+                                  } else {
+                                    toast.error("Failed to accept bid");
+                                  }
+                                }}
+                              >
+                                Accept
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="border-red-500 text-red-500 hover:bg-red-50"
+                                onClick={async () => {
+                                  const success = await updateBidStatus(
+                                    bid.id,
+                                    "rejected",
+                                    bid.bidder_id,
+                                    user?.id || "",
+                                    targetItem.name,
+                                    bid.offered_item.name
+                                  );
+                                  if (success) {
+                                    toast.success("Bid rejected");
+                                    fetchUserBids();
+                                  } else {
+                                    toast.error("Failed to reject bid");
+                                  }
+                                }}
+                              >
+                                Reject
+                              </Button>
                             </div>
                           </div>
                         ))}
