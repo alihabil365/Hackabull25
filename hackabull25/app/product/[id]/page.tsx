@@ -124,36 +124,31 @@ export default function ProductPage({
             <DrawerContent>
               <DrawerHeader>
                 <DrawerTitle>My Products</DrawerTitle>
-                <DrawerDescription>
-                  {userProducts.length > 0 ? (
-                    <ul className="space-y-2">
-                      {userProducts.map((item) => (
-                        <li
-                          key={item.id}
-                          className="flex items-center space-x-4"
-                        >
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            width={50}
-                            height={50}
-                            className="rounded-md"
-                          />
-                          <div>
-                            <p className="font-bold">{item.name}</p>
-                            <p className="text-sm text-gray-600">
-                              ${item.price.toFixed(2)}
-                            </p>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-gray-600">
-                      You haven't uploaded any products yet.
-                    </p>
-                  )}
-                </DrawerDescription>
+                {userProducts.length > 0 ? (
+                  <ul className="space-y-2">
+                    {userProducts.map((item) => (
+                      <li key={item.id} className="flex items-center space-x-4">
+                        <Image
+                          src={item.image}
+                          alt={item.name}
+                          width={50}
+                          height={50}
+                          className="rounded-md"
+                        />
+                        <div>
+                          <p className="font-bold">{item.name}</p>
+                          <p className="text-sm text-gray-600">
+                            ${item.price.toFixed(2)}
+                          </p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-gray-600">
+                    You haven't uploaded any products yet.
+                  </p>
+                )}
               </DrawerHeader>
             </DrawerContent>
           </Drawer>
