@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
 import { createClient } from "@/utils/supabase/client";
+import updateBidStatus from "@/actions/updateBidStatus";
+import { toast } from "sonner";
 
 // ShadCn
 import { Button } from "@/components/ui/button";
@@ -55,9 +57,9 @@ interface Bid {
 interface Notification {
   id: string;
   type: "bid" | "match" | "message" | "system";
-  message: string;
-  timestamp: string;
-  read: boolean;
+  title: string;
+  body: string;
+  created_at: string;
 }
 
 interface BidGroup {
@@ -75,36 +77,15 @@ export default function DashboardBody() {
   const [loading, setLoading] = useState(true);
   const [loadingWishlist, setLoadingWishlist] = useState(true);
   const [loadingBids, setLoadingBids] = useState(true);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loadingNotifications, setLoadingNotifications] = useState(true);
   const supabase = createClient();
-
-  const [notifications] = useState<Notification[]>([
-    {
-      id: "1",
-      type: "bid",
-      message: "New bid on your Vintage Camera",
-      timestamp: "2024-02-24T10:00:00Z",
-      read: false,
-    },
-    {
-      id: "2",
-      type: "match",
-      message: "You matched with a Gaming Console!",
-      timestamp: "2024-02-24T09:30:00Z",
-      read: true,
-    },
-    {
-      id: "3",
-      type: "system",
-      message: "Welcome to Barter! Start by adding your first item.",
-      timestamp: "2024-02-24T09:00:00Z",
-      read: true,
-    },
-  ]);
 
   useEffect(() => {
     if (user) {
       fetchUserItems();
       fetchWishlistItems();
+      fetchNotifications();
     }
   }, [user]);
 
@@ -256,6 +237,26 @@ export default function DashboardBody() {
     }
   };
 
+  const fetchNotifications = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from("notifications")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+      setNotifications(data || []);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    } finally {
+      setLoadingNotifications(false);
+    }
+  };
+
   return (
     <div className="px-6 space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -349,9 +350,58 @@ export default function DashboardBody() {
                                 </p>
                               </div>
                             </div>
-                            <p className="font-bold">
-                              ${bid.offered_item.price.toFixed(2)}
-                            </p>
+                            <div className="flex items-center space-x-2">
+                              <p className="font-bold">
+                                ${bid.offered_item.price.toFixed(2)}
+                              </p>
+                              <div className="flex space-x-1">
+                                <Button
+                                  size="sm"
+                                  className="bg-green-500 hover:bg-green-600"
+                                  onClick={async () => {
+                                    const success = await updateBidStatus(
+                                      bid.id,
+                                      "accepted",
+                                      bid.bidder_id,
+                                      user?.id || "",
+                                      targetItem.name,
+                                      bid.offered_item.name
+                                    );
+                                    if (success) {
+                                      toast.success("Bid accepted!");
+                                      fetchUserBids();
+                                    } else {
+                                      toast.error("Failed to accept bid");
+                                    }
+                                  }}
+                                >
+                                  Accept
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="border-red-500 text-red-500 hover:bg-red-50"
+                                  onClick={async () => {
+                                    const success = await updateBidStatus(
+                                      bid.id,
+                                      "rejected",
+                                      bid.bidder_id,
+                                      user?.id || "",
+                                      targetItem.name,
+                                      bid.offered_item.name
+                                    );
+                                    if (success) {
+                                      toast.success("Bid rejected");
+                                      fetchUserBids();
+                                    } else {
+                                      toast.error("Failed to reject bid");
+                                    }
+                                  }}
+                                >
+                                  Reject
+                                </Button>
+                              </div>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -427,30 +477,52 @@ export default function DashboardBody() {
             <CardTitle className="flex justify-between items-center">
               <span>Notifications</span>
               <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                {notifications.filter((n) => !n.read).length} New
+                {notifications.length} New
               </Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {notifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className={`p-3 rounded-lg ${
-                    notification.read ? "bg-gray-50" : "bg-blue-50"
-                  }`}
-                >
-                  <div className="flex justify-between items-start">
-                    <p className="font-medium">{notification.message}</p>
-                    {!notification.read && (
-                      <div className="h-2 w-2 rounded-full bg-blue-500" />
-                    )}
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {new Date(notification.timestamp).toLocaleString()}
-                  </p>
+              {loadingNotifications ? (
+                <div className="text-center py-4">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
                 </div>
-              ))}
+              ) : notifications.length === 0 ? (
+                <div className="text-center py-4">
+                  <p className="text-gray-500">No notifications</p>
+                </div>
+              ) : (
+                notifications.map((notification) => (
+                  <div
+                    key={notification.id}
+                    className="p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-medium">{notification.title}</p>
+                        <p className="text-sm text-gray-600 mt-1">
+                          {notification.body}
+                        </p>
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className={
+                          notification.type === "bid"
+                            ? "bg-blue-100 text-blue-800"
+                            : notification.type === "match"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-gray-100 text-gray-800"
+                        }
+                      >
+                        {notification.type}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">
+                      {new Date(notification.created_at).toLocaleString()}
+                    </p>
+                  </div>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
