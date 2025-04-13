@@ -61,66 +61,6 @@ export default function ProductPage({
     fetchUserProducts();
   }, [user]);
 
-  const handleBidSubmit = async () => {
-    if (!user?.id) {
-      toast.error("You must be signed in to place a bid.");
-      return;
-    }
-
-    const supabase = createClient();
-
-    // Check for existing bids
-    const { data: existing, error: checkError } = await supabase
-      .from("bids")
-      .select("id")
-      .eq("bidder_id", user.id)
-      .eq("target_item_id", product.id)
-      .in("offered_item_id", selectedItemIds);
-
-    if (checkError) {
-      console.error("Error checking for existing bids:", checkError.message);
-      toast.error("Failed to check for existing bids.");
-      return;
-    }
-
-    if (existing && existing.length > 0) {
-      toast.warning("Some of your bids already exist. We'll update them.");
-    }
-
-    const inserts = selectedItemIds.map((itemId) => ({
-      bidder_id: user.id,
-      offered_item_id: itemId,
-      target_item_id: product.id,
-      status: "pending",
-    }));
-
-    const { error: insertError } = await supabase.from("bids").upsert(inserts, {
-      onConflict: "bidder_id,offered_item_id,target_item_id",
-    });
-
-    if (insertError) {
-      console.error("Bid failed:", insertError.message);
-      toast.error("Failed to place bid.");
-      return;
-    }
-
-    // Create notification for the product owner
-    const offeredItems = userProducts.filter((item) =>
-      selectedItemIds.includes(item.id)
-    );
-    const itemNames = offeredItems.map((item) => item.name).join(", ");
-
-    await createNotification(
-      product.userId,
-      "bid",
-      "New Bid Received",
-      `${user.firstName} ${user.lastName} has offered ${itemNames} for your ${product.name}`
-    );
-
-    toast.success("Your bid(s) have been submitted!");
-    setSelectedItemIds([]);
-  };
-
   if (!product) return null;
 
   return (
@@ -219,7 +159,60 @@ export default function ProductPage({
               <Button
                 className="bg-green-600 hover:bg-green-700 text-white"
                 disabled={selectedItemIds.length === 0}
-                onClick={handleBidSubmit}
+                onClick={async () => {
+                  if (!user?.id) {
+                    toast.error("You must be signed in to place a bid.");
+                    return;
+                  }
+
+                  const supabase = createClient();
+
+                  // Check for existing bids
+                  const { data: existing, error: checkError } = await supabase
+                    .from("bids")
+                    .select("id")
+                    .eq("bidder_id", user.id)
+                    .eq("target_item_id", product.id)
+                    .in("offered_item_id", selectedItemIds);
+
+                  if (checkError) {
+                    console.error(
+                      "Error checking for existing bids:",
+                      checkError.message
+                    );
+                    toast.error("Failed to check for existing bids.");
+                    return; // stop further execution
+                  }
+
+                  if (existing && existing.length > 0) {
+                    toast.warning(
+                      "Some of your bids already exist. We'll update them."
+                    );
+                  }
+
+                  const inserts = selectedItemIds.map((itemId) => ({
+                    bidder_id: user.id,
+                    offered_item_id: itemId,
+                    target_item_id: product.id,
+                    status: "pending",
+                  }));
+                
+                  const { error: insertError } = await supabase
+                    .from("bids")
+                    .upsert(inserts, {
+                    onConflict: "bidder_id,offered_item_id,target_item_id",
+                  });
+                
+                  if (insertError) {
+                    console.error("Bid failed:", insertError.message);
+                    toast.error("Failed to place bid.");
+                    return; // 🛑 make sure we stop here
+                  }
+
+                  // ✅ Success
+                  toast.success("Your bid(s) have been submitted!");
+                  setSelectedItemIds([]);
+                }}
               >
                 Submit {selectedItemIds.length} Bid
                 {selectedItemIds.length > 1 ? "s" : ""}
