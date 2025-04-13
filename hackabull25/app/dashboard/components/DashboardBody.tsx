@@ -15,6 +15,7 @@ import {
   CardTitle,
 } from "../../../components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
 interface UserItem {
   id: string;
@@ -35,11 +36,20 @@ interface WishlistItem {
 
 interface Bid {
   id: string;
-  itemName: string;
-  bidderName: string;
-  bidAmount: number;
-  timestamp: string;
+  offered_item_id: string;
+  target_item_id: string;
+  bidder_id: string;
   status: "pending" | "accepted" | "rejected";
+  created_at: string;
+  offered_item: {
+    name: string;
+    price: number;
+    image: string;
+  };
+  bidder: {
+    firstName: string;
+    lastName: string;
+  };
 }
 
 interface Notification {
@@ -50,33 +60,22 @@ interface Notification {
   read: boolean;
 }
 
+interface BidGroup {
+  targetItem: UserItem;
+  bids: Bid[];
+}
+
 export default function DashboardBody() {
   const { user } = useUser();
   const [userItems, setUserItems] = useState<UserItem[]>([]);
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
+  const [currentBids, setCurrentBids] = useState<Bid[]>([]);
+  const [groupedBids, setGroupedBids] = useState<BidGroup[]>([]);
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [loadingWishlist, setLoadingWishlist] = useState(true);
+  const [loadingBids, setLoadingBids] = useState(true);
   const supabase = createClient();
-
-  // Example data for bids and notifications - these can be updated later to use real data
-  const [currentBids] = useState<Bid[]>([
-    {
-      id: "1",
-      itemName: "Vintage Camera",
-      bidderName: "John Doe",
-      bidAmount: 280.0,
-      timestamp: "2024-02-24T10:00:00Z",
-      status: "pending",
-    },
-    {
-      id: "2",
-      itemName: "Gaming Console",
-      bidderName: "Jane Smith",
-      bidAmount: 450.0,
-      timestamp: "2024-02-24T09:30:00Z",
-      status: "pending",
-    },
-  ]);
 
   const [notifications] = useState<Notification[]>([
     {
@@ -108,6 +107,100 @@ export default function DashboardBody() {
       fetchWishlistItems();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (userItems.length > 0) {
+      fetchUserBids();
+    }
+  }, [userItems]);
+
+  useEffect(() => {
+    // Group bids by target item
+    const grouped = userItems
+      .map((item) => ({
+        targetItem: item,
+        bids: currentBids.filter((bid) => bid.target_item_id === item.id),
+      }))
+      .filter((group) => group.bids.length > 0);
+
+    setGroupedBids(grouped);
+  }, [currentBids, userItems]);
+
+  const toggleItemExpansion = (itemId: string) => {
+    setExpandedItems((prev) => {
+      const next = new Set(prev);
+      if (next.has(itemId)) {
+        next.delete(itemId);
+      } else {
+        next.add(itemId);
+      }
+      return next;
+    });
+  };
+
+  const fetchUserBids = async () => {
+    if (!user) return;
+
+    try {
+      // Fetch bids where the user's items are being bid on
+      const { data: receivedBids, error: receivedError } = await supabase
+        .from("bids")
+        .select(
+          `
+          id,
+          offered_item_id,
+          target_item_id,
+          bidder_id,
+          status,
+          created_at,
+          offered_item:products!offered_item_id (
+            name,
+            price,
+            image
+          ),
+          bidder:users!bidder_id (
+            firstName,
+            lastName
+          )
+        `
+        )
+        .eq("status", "pending")
+        .in(
+          "target_item_id",
+          userItems.map((item) => item.id)
+        );
+
+      if (receivedError) throw receivedError;
+
+      // Type cast the response to match our Bid interface
+      const typedBids = (receivedBids || []).map((bid) => {
+        // Extract the first (and should be only) item from the arrays
+        const offeredItem = Array.isArray(bid.offered_item)
+          ? bid.offered_item[0]
+          : bid.offered_item;
+        const bidder = Array.isArray(bid.bidder) ? bid.bidder[0] : bid.bidder;
+
+        return {
+          ...bid,
+          offered_item: {
+            name: offeredItem?.name || "",
+            price: offeredItem?.price || 0,
+            image: offeredItem?.image || "",
+          },
+          bidder: {
+            firstName: bidder?.firstName || "",
+            lastName: bidder?.lastName || "",
+          },
+        };
+      }) as Bid[];
+
+      setCurrentBids(typedBids);
+    } catch (error) {
+      console.error("Error fetching bids:", error);
+    } finally {
+      setLoadingBids(false);
+    }
+  };
 
   const fetchUserItems = async () => {
     try {
@@ -181,25 +274,89 @@ export default function DashboardBody() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {currentBids.map((bid) => (
-                <div
-                  key={bid.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                >
-                  <div>
-                    <p className="font-medium">{bid.itemName}</p>
-                    <p className="text-sm text-gray-500">
-                      Bid by {bid.bidderName}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold">${bid.bidAmount.toFixed(2)}</p>
-                    <p className="text-xs text-gray-500">
-                      {new Date(bid.timestamp).toLocaleDateString()}
-                    </p>
-                  </div>
+              {loadingBids ? (
+                <div className="text-center py-4">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
                 </div>
-              ))}
+              ) : groupedBids.length === 0 ? (
+                <div className="text-center py-4">
+                  <p className="text-gray-500">No active bids</p>
+                </div>
+              ) : (
+                groupedBids.map(({ targetItem, bids }) => (
+                  <div key={targetItem.id} className="space-y-2">
+                    <div
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100"
+                      onClick={() => toggleItemExpansion(targetItem.id)}
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className="relative h-16 w-16">
+                          <Image
+                            src={targetItem.image}
+                            alt={targetItem.name}
+                            fill
+                            className="object-cover rounded-md"
+                          />
+                        </div>
+                        <div>
+                          <p className="font-medium">{targetItem.name}</p>
+                          <p className="text-sm text-gray-500">
+                            ${targetItem.price.toFixed(2)}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <Badge
+                          variant="secondary"
+                          className="bg-blue-100 text-blue-800"
+                        >
+                          {bids.length} {bids.length === 1 ? "bid" : "bids"}
+                        </Badge>
+                        {expandedItems.has(targetItem.id) ? (
+                          <ChevronUpIcon className="h-5 w-5" />
+                        ) : (
+                          <ChevronDownIcon className="h-5 w-5" />
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Dropdown content */}
+                    {expandedItems.has(targetItem.id) && (
+                      <div className="pl-8 space-y-2">
+                        {bids.map((bid) => (
+                          <div
+                            key={bid.id}
+                            className="flex items-center justify-between p-3 bg-white border rounded-lg"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <div className="relative h-12 w-12">
+                                <Image
+                                  src={bid.offered_item.image}
+                                  alt={bid.offered_item.name}
+                                  fill
+                                  className="object-cover rounded-md"
+                                />
+                              </div>
+                              <div>
+                                <p className="font-medium">
+                                  {bid.offered_item.name}
+                                </p>
+                                <p className="text-sm text-gray-500">
+                                  by {bid.bidder.firstName}{" "}
+                                  {bid.bidder.lastName}
+                                </p>
+                              </div>
+                            </div>
+                            <p className="font-bold">
+                              ${bid.offered_item.price.toFixed(2)}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
