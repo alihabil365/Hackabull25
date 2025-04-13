@@ -23,10 +23,11 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" className={font.className}>
-        <body>
-          {children}
-          <Toaster />
-        </body>
+      <body>
+        {children}
+        <Toaster position="bottom-center" richColors /> {/* ✅ This enables the popups */}
+      </body>
+
       </html>
     </ClerkProvider>
   );
