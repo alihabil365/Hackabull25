@@ -7,7 +7,7 @@ function page() {
       <div className="flex-1 overflow-auto">
         <div className="p-6 border-b">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900">Explore</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Wishlist</h1>
           </div>
         </div>
         <div className="w-full">

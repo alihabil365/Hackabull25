@@ -73,7 +73,7 @@ function DashboardSidebar() {
             <HeartIcon className="size-6" />
             <p className="text-lg font-medium">Wishlist</p>
           </Link>
-          <Link
+          {/* <Link
             href="/dashboard/orders"
             className={`flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors ${
               isActive("/dashboard/orders")
@@ -83,7 +83,7 @@ function DashboardSidebar() {
           >
             <Package className="size-6" />
             <p className="text-lg font-medium">Orders</p>
-          </Link>
+          </Link> */}
         </div>
       </div>
     </div>
