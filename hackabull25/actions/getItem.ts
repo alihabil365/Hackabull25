@@ -7,9 +7,22 @@ export default async function getItem(id: String) {
 
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select(
+      `
+        *,
+        user:users (
+          id,
+          emailAddress,
+          firstName,
+          lastName,
+          imageUrl
+        )
+      `
+    )
     .eq("id", id)
     .single();
+
+  console.log(data);
 
   if (error) console.log(error);
   else return data;

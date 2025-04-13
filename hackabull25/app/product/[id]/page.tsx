@@ -7,13 +7,14 @@ import { use, useEffect, useState, useTransition } from "react";
 import Image from "next/image";
 
 // Components
-// import ProductClientPage from "@/components/ProductClientPage";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // Server Actions
 import getItem from "@/actions/getItem";
-// import LoadingCircleSpinner from "@/components/Spinner";
-import { Button } from "@/components/ui/button";
+
+// Lucide
 import { WandSparkles } from "lucide-react";
 
 export default function ProductPage({
@@ -60,7 +61,16 @@ export default function ProductPage({
             <WandSparkles className="h-6 w-6" />
             Actual market valuation according to AI: $10.00
           </Badge>
-          <hr className="opacity-50" />
+          <div className="flex space-x-2 items-center bg-gray-50 p-4 rounded-xl">
+            <Avatar>
+              <AvatarImage src={product.user.imageUrl} />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            <div>
+              {product.user.firstName} {product.user.lastName}
+            </div>
+          </div>
+
           <p>{product.description}</p>
           <Button className="bg-pink-500 cursor-pointer">Place Bid</Button>
         </div>
