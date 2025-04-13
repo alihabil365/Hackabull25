@@ -258,221 +258,287 @@ export default function DashboardBody() {
   };
 
   return (
-    <div className="px-6 space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Current Bids Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex justify-between items-center">
-              <span>Current Bids</span>
-              <Badge
-                variant="secondary"
-                className="bg-purple-100 text-purple-800"
-              >
-                {currentBids.length} Active
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {loadingBids ? (
-                <div className="text-center py-4">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-                </div>
-              ) : groupedBids.length === 0 ? (
-                <div className="text-center py-4">
-                  <p className="text-gray-500">No active bids</p>
-                </div>
-              ) : (
-                groupedBids.map(({ targetItem, bids }) => (
-                  <div key={targetItem.id} className="space-y-2">
+    <div className="flex-1 px-6 flex-col">
+      <div className="flex space-x-6 h-1/2 pb-6">
+        <div className="w-1/2 overflow-hidden">
+          <Card className="h-full">
+            <CardHeader>
+              <CardTitle className="flex justify-between items-center">
+                <span>Current Bids</span>
+                <Badge
+                  variant="secondary"
+                  className="bg-purple-100 text-purple-800"
+                >
+                  {currentBids.length} Active
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {loadingBids ? (
+                  <div className="text-center py-4">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+                  </div>
+                ) : groupedBids.length === 0 ? (
+                  <div className="text-center py-4">
+                    <p className="text-gray-500">No active bids</p>
+                  </div>
+                ) : (
+                  groupedBids.map(({ targetItem, bids }) => (
+                    <div key={targetItem.id} className="space-y-2">
+                      <div
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100"
+                        onClick={() => toggleItemExpansion(targetItem.id)}
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div className="relative h-16 w-16">
+                            <Image
+                              src={targetItem.image}
+                              alt={targetItem.name}
+                              fill
+                              className="object-cover rounded-md"
+                            />
+                          </div>
+                          <div className="flex-1 w-40">
+                            <p className="font-medium line-clamp-1">
+                              {targetItem.name}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              ${targetItem.price.toFixed(2)}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <Badge
+                            variant="secondary"
+                            className="bg-blue-100 text-blue-800"
+                          >
+                            {bids.length} {bids.length === 1 ? "bid" : "bids"}
+                          </Badge>
+                          {expandedItems.has(targetItem.id) ? (
+                            <ChevronUpIcon className="h-5 w-5" />
+                          ) : (
+                            <ChevronDownIcon className="h-5 w-5" />
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Dropdown content */}
+                      {expandedItems.has(targetItem.id) && (
+                        <div className="pl-8 space-y-2">
+                          {bids.map((bid) => (
+                            <div
+                              key={bid.id}
+                              className="flex items-center justify-between p-3 bg-white border rounded-lg"
+                            >
+                              <div className="flex items-center space-x-3">
+                                <div className="relative h-12 w-12">
+                                  <Image
+                                    src={bid.offered_item.image}
+                                    alt={bid.offered_item.name}
+                                    fill
+                                    className="object-cover rounded-md"
+                                  />
+                                </div>
+                                <div>
+                                  <p className="font-medium">
+                                    {bid.offered_item.name}
+                                  </p>
+                                  <p className="text-sm text-gray-500">
+                                    by {bid.bidder.firstName}{" "}
+                                    {bid.bidder.lastName}
+                                  </p>
+                                </div>
+                              </div>
+                              <p className="font-bold">
+                                ${bid.offered_item.price.toFixed(2)}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <div className="w-1/2 overflow-hidden">
+          <Card className="flex flex-col h-full">
+            <CardHeader>
+              <CardTitle className="flex justify-between items-center">
+                <span>My Items</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex-1 overflow-y-auto">
+              <div className="space-y-4">
+                {loading ? (
+                  <div className="text-center py-4">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+                  </div>
+                ) : userItems.length === 0 ? (
+                  <div className="text-center py-4">
+                    <p className="text-gray-500">No items added yet</p>
+                  </div>
+                ) : (
+                  userItems.map((item) => (
                     <div
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100"
-                      onClick={() => toggleItemExpansion(targetItem.id)}
+                      key={item.id}
+                      className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg"
                     >
-                      <div className="flex items-center space-x-4">
+                      <div className="relative h-16 w-16">
+                        <Image
+                          src={item.image}
+                          alt={item.name}
+                          fill
+                          className="object-cover rounded-md"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium">{item.name}</p>
+                        <p className="text-sm text-gray-500">
+                          ${item.price.toFixed(2)}
+                        </p>
+                      </div>
+                      <Badge
+                        variant={
+                          item.status === "active"
+                            ? "default"
+                            : item.status === "pending"
+                            ? "secondary"
+                            : "outline"
+                        }
+                      >
+                        {item.status}
+                      </Badge>
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      <div className="flex space-x-6 h-108 pb-6">
+        <Card className="w-1/2 overflow-hidden flex flex-col space-y-6">
+          <CardTitle className="flex justify-between items-center px-6 pt-6">
+            <span>Notifications</span>
+            <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+              {notifications.length} New
+            </Badge>
+          </CardTitle>
+
+          <CardContent className="overflow-y-scroll">
+            {loadingNotifications ? (
+              <div className="text-center py-4">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+              </div>
+            ) : notifications.length === 0 ? (
+              <div className="text-center py-4">
+                <p className="text-gray-500">No notifications</p>
+              </div>
+            ) : (
+              notifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  className="rounded-lg bg-gray-50 hover:bg-gray-100 overflow-hidden mb-3 p-3"
+                >
+                  <div className="">
+                    <div>
+                      <p className="font-medium flex items-center justify-between">
+                        {notification.title}
+                        <Badge
+                          variant="outline"
+                          className={
+                            notification.type === "bid"
+                              ? "bg-blue-100 text-blue-800"
+                              : notification.type === "match"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-gray-100 text-gray-800"
+                          }
+                        >
+                          {notification.type}
+                        </Badge>
+                      </p>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {notification.body}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    {new Date(notification.created_at).toLocaleString()}
+                  </p>
+                </div>
+              ))
+            )}
+          </CardContent>
+        </Card>
+
+        <div className="w-1/2">
+          <Card className="flex flex-col h-full">
+            <CardHeader>
+              <CardTitle>Wishlist</CardTitle>
+            </CardHeader>
+            <CardContent className="flex-1 overflow-y-auto">
+              <div className="space-y-4">
+                <div className="max-h-[300px] overflow-y-auto space-y-3 pr-2">
+                  {loadingWishlist ? (
+                    <div className="text-center py-4">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+                    </div>
+                  ) : wishlistItems.length === 0 ? (
+                    <div className="text-center py-4">
+                      <p className="text-gray-500">Your wishlist is empty</p>
+                    </div>
+                  ) : (
+                    wishlistItems.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg"
+                      >
                         <div className="relative h-16 w-16">
                           <Image
-                            src={targetItem.image}
-                            alt={targetItem.name}
+                            src={item.image}
+                            alt={item.name}
                             fill
                             className="object-cover rounded-md"
                           />
                         </div>
-                        <div className="flex-1 w-48">
-                          <p className="font-medium line-clamp-1">
-                            {targetItem.name}
-                          </p>
+                        <div className="flex-1">
+                          <p className="font-medium">{item.name}</p>
                           <p className="text-sm text-gray-500">
-                            ${targetItem.price.toFixed(2)}
+                            ${item.price.toFixed(2)}
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-3">
-                        <Badge
-                          variant="secondary"
-                          className="bg-blue-100 text-blue-800"
-                        >
-                          {bids.length} {bids.length === 1 ? "bid" : "bids"}
-                        </Badge>
-                        {expandedItems.has(targetItem.id) ? (
-                          <ChevronUpIcon className="h-5 w-5" />
-                        ) : (
-                          <ChevronDownIcon className="h-5 w-5" />
-                        )}
-                      </div>
-                    </div>
+                    ))
+                  )}
+                </div>
+                <Button
+                  className="w-full bg-gradient-to-r from-[#E329F8FF] to-[#ff0f7b]"
+                  asChild
+                >
+                  <Link href="/dashboard/products">Start Swiping</Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
 
-                    {/* Dropdown content */}
-                    {expandedItems.has(targetItem.id) && (
-                      <div className="pl-8 space-y-2">
-                        {bids.map((bid) => (
-                          <div
-                            key={bid.id}
-                            className="flex items-center justify-between p-3 bg-white border rounded-lg"
-                          >
-                            <div className="flex items-center space-x-3">
-                              <div className="relative h-12 w-12">
-                                <Image
-                                  src={bid.offered_item.image}
-                                  alt={bid.offered_item.name}
-                                  fill
-                                  className="object-cover rounded-md"
-                                />
-                              </div>
-                              <div>
-                                <p className="font-medium">
-                                  {bid.offered_item.name}
-                                </p>
-                                <p className="text-sm text-gray-500">
-                                  by {bid.bidder.firstName}{" "}
-                                  {bid.bidder.lastName}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <p className="font-bold">
-                                ${bid.offered_item.price.toFixed(2)}
-                              </p>
-                              <div className="flex space-x-1">
-                                <Button
-                                  size="sm"
-                                  className="bg-green-500 hover:bg-green-600"
-                                  onClick={async () => {
-                                    const success = await updateBidStatus(
-                                      bid.id,
-                                      "accepted",
-                                      bid.bidder_id,
-                                      user?.id || "",
-                                      targetItem.name,
-                                      bid.offered_item.name
-                                    );
-                                    if (success) {
-                                      toast.success("Bid accepted!");
-                                      fetchUserBids();
-                                    } else {
-                                      toast.error("Failed to accept bid");
-                                    }
-                                  }}
-                                >
-                                  Accept
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="border-red-500 text-red-500 hover:bg-red-50"
-                                  onClick={async () => {
-                                    const success = await updateBidStatus(
-                                      bid.id,
-                                      "rejected",
-                                      bid.bidder_id,
-                                      user?.id || "",
-                                      targetItem.name,
-                                      bid.offered_item.name
-                                    );
-                                    if (success) {
-                                      toast.success("Bid rejected");
-                                      fetchUserBids();
-                                    } else {
-                                      toast.error("Failed to reject bid");
-                                    }
-                                  }}
-                                >
-                                  Reject
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
+  return (
+    <div className="h-full px-6 pb-6 bg-red-500 flex-1">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full auto-rows-fr">
+        {/* Current Bids Card */}
 
         {/* My Items Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex justify-between items-center">
-              <span>My Items</span>
-              {/* <Button variant="outline" size="sm" asChild>
-                <Link href="/dashboard/add-item">+ Add Item</Link>
-              </Button> */}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {loading ? (
-                <div className="text-center py-4">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-                </div>
-              ) : userItems.length === 0 ? (
-                <div className="text-center py-4">
-                  <p className="text-gray-500">No items added yet</p>
-                </div>
-              ) : (
-                userItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg"
-                  >
-                    <div className="relative h-16 w-16">
-                      <Image
-                        src={item.image}
-                        alt={item.name}
-                        fill
-                        className="object-cover rounded-md"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-medium">{item.name}</p>
-                      <p className="text-sm text-gray-500">
-                        ${item.price.toFixed(2)}
-                      </p>
-                    </div>
-                    <Badge
-                      variant={
-                        item.status === "active"
-                          ? "default"
-                          : item.status === "pending"
-                          ? "secondary"
-                          : "outline"
-                      }
-                    >
-                      {item.status}
-                    </Badge>
-                  </div>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Notifications Card */}
-        <Card>
+        <Card className="flex flex-col h-full">
           <CardHeader>
             <CardTitle className="flex justify-between items-center">
               <span>Notifications</span>
@@ -481,7 +547,7 @@ export default function DashboardBody() {
               </Badge>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 overflow-y-auto">
             <div className="space-y-4">
               {loadingNotifications ? (
                 <div className="text-center py-4">
@@ -528,11 +594,11 @@ export default function DashboardBody() {
         </Card>
 
         {/* Wishlist Card */}
-        <Card>
+        <Card className="flex flex-col h-full">
           <CardHeader>
             <CardTitle>Wishlist</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 overflow-y-auto">
             <div className="space-y-4">
               <div className="max-h-[300px] overflow-y-auto space-y-3 pr-2">
                 {loadingWishlist ? (
