@@ -28,14 +28,8 @@ export default function Home() {
             <GalleryVerticalEnd className="size-4" />
             <p className="font-bold">Bartr Inc.</p>
           </Link>
-          <Link href="/explore" className="hover:underline">
-            Explore
-          </Link>
           <Link href="/about" className="hover:underline">
             About
-          </Link>
-          <Link href="/swipe" className="hover:underline">
-            Swipe
           </Link>
           <Link href="/dashboard" className="hover:underline">
             Dashboard

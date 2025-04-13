@@ -1,14 +1,11 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import {
   BoxIcon,
   HouseIcon,
   Package,
-  User,
   CompassIcon,
   HeartIcon,
-  GitBranchIcon,
   GitCompareArrows,
 } from "lucide-react";
 
@@ -20,7 +17,7 @@ function DashboardSidebar() {
   };
 
   return (
-    <div className="w-1/5 p-6 bg-gray-50 flex flex-col h-screen border-r">
+    <div className="w-1/5 p-6 bg-gray-50 dark:bg-black flex flex-col h-screen border-r">
       {/* Logo */}
       {/* <Link href="/dashboard" className="flex items-center gap-4 mb-6">
         <Image src="/Logo.svg" alt="Bartr Logo" width={150} height={150} />
@@ -88,19 +85,6 @@ function DashboardSidebar() {
             <p className="text-lg font-medium">Orders</p>
           </Link>
         </div>
-      </div>
-
-      {/* Bottom Menu */}
-      <div className="mt-auto pt-6 border-t border-gray-200">
-        <Link
-          href="/dashboard/profile"
-          className={`flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors ${
-            isActive("/dashboard/profile") ? "text-purple-500 bg-purple-50" : ""
-          }`}
-        >
-          <User className="size-6" />
-          <p className="text-lg font-medium">Profile</p>
-        </Link>
       </div>
     </div>
   );
